@@ -1,24 +1,17 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { Text } from "react-native";
-import { Link } from "expo-router";
+import { Link } from "expo-router"
+import { Text, View } from "react-native"
+
+import { Screen } from "@/components/generic"
 
 const MakePayment = () => {
   return (
-    <SafeAreaView
-      style={{ flex: 1, alignContent: "center", justifyContent: "center" }}
-    >
-      <StatusBar style="light" />
-      {/*  */}
-      <Text style={{ textAlign: "center", marginBottom: 20 }}>
-        Make payment screen
-      </Text>
-      <Link style={{ textAlign: "center" }} href="/payment_feedback">
-        Go to - Payment feedback screen
-      </Link>
-      {/*  */}
-    </SafeAreaView>
-  );
-};
+    <Screen>
+      <View className="flex-1 items-center justify-center">
+        <Text className="mb-5">Make payment screen</Text>
+        <Link href="/payment_feedback">Go to - Payment feedback screen</Link>
+      </View>
+    </Screen>
+  )
+}
 
-export default MakePayment;
+export default MakePayment
