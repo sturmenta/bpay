@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@expo-google-fonts/courier-prime':
+    specifier: ^0.2.3
+    version: 0.2.3
   '@expo/vector-icons':
     specifier: ^14.0.0
     version: 14.0.0
@@ -1554,6 +1557,10 @@ packages:
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
+
+  /@expo-google-fonts/courier-prime@0.2.3:
+    resolution: {integrity: sha512-QOIpcF0V8PQ2O66yrMBkBa9LcOjbV3qmeEdvPBGQaCz38YQKd//pT7FizvRVHPi0RHDhKeg0yk+KidyXcy88tw==}
+    dev: false
 
   /@expo/bunyan@4.0.0:
     resolution: {integrity: sha512-Ydf4LidRB/EBI+YrB+cVLqIseiRfjUI/AeHBgjGMtq3GroraDu81OV7zqophRgupngoL3iS3JUMDMnxO7g39qA==}
