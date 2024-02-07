@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { Text, View } from "react-native"
 
-import { CryptoCoinPicker } from "@/components/for_this_app"
+import { C_Card, CryptoCoinPicker, Footer } from "@/components/for_this_app"
 import { C_Button, C_TextInput, Screen } from "@/components/generic"
 import { CryptoCoin } from "@/constants"
 import { usePaymentStore } from "@/store"
@@ -26,7 +26,12 @@ const ConfigPayment = () => {
     control,
     handleSubmit
     // formState: { errors }
-  } = useForm<Inputs>()
+  } = useForm<Inputs>({
+    defaultValues: {
+      payment_amount: "222",
+      description: "alo"
+    }
+  })
 
   const onSubmit = (data: { payment_amount: string; description: string }) => {
     setPayment({
@@ -40,7 +45,7 @@ const ConfigPayment = () => {
 
   return (
     <Screen>
-      <View className="m-4 mb-20 rounded-lg bg-white p-5 shadow-md">
+      <C_Card>
         <Text className="p-5 text-center text-2xl">Crear pago</Text>
         <View className="mt-5">
           <Controller
@@ -89,15 +94,9 @@ const ConfigPayment = () => {
             onPress={handleSubmit(onSubmit)}
           />
         </View>
-      </View>
-      <View className="flex-1 justify-end">
-        <Text className="mb-2 text-center text-xs text-gray-400">
-          Technical challenge done by @sturmenta
-        </Text>
-        <Text className="text-center text-xs text-gray-400">
-          Powered by Bitnovo. | © 2024 Bitnovo. All rights reserved.
-        </Text>
-      </View>
+      </C_Card>
+      {/*  */}
+      <Footer />
     </Screen>
   )
 }
