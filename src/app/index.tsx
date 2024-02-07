@@ -1,3 +1,3 @@
-import { Redirect } from "expo-router";
+import { Redirect } from "expo-router"
 
-export default () => <Redirect href="/config_payment" />;
+export default () => <Redirect href="/config_payment" />

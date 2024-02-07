@@ -1,8 +1,14 @@
+// TODO: Add form validation
+
+import { useRouter } from "expo-router"
+import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { Text, View } from "react-native"
 
 import { CryptoCoinPicker } from "@/components/for_this_app"
 import { C_Button, C_TextInput, Screen } from "@/components/generic"
+import { CryptoCoin } from "@/constants"
+import { usePaymentStore } from "@/store"
 
 type Inputs = {
   payment_amount: string
@@ -10,13 +16,27 @@ type Inputs = {
 }
 
 const ConfigPayment = () => {
+  const [selectedCoin, setSelectedCoin] = useState<{ value: CryptoCoin }>({
+    value: "BTC"
+  })
+  const { setPayment } = usePaymentStore()
+  const router = useRouter()
+
   const {
     control,
     handleSubmit
     // formState: { errors }
   } = useForm<Inputs>()
-  const onSubmit = (data: { payment_amount: string; description: string }) =>
-    console.log(data)
+
+  const onSubmit = (data: { payment_amount: string; description: string }) => {
+    setPayment({
+      amount: parseFloat(data.payment_amount),
+      description: data.description,
+      coin: selectedCoin.value
+    })
+
+    router.push("/make_payment")
+  }
 
   return (
     <Screen>
@@ -33,6 +53,7 @@ const ConfigPayment = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                keyboardType="numeric"
               />
             )}
             name="payment_amount"
@@ -41,7 +62,7 @@ const ConfigPayment = () => {
 
           <View className="h-5" />
 
-          <CryptoCoinPicker />
+          <CryptoCoinPicker {...{ selectedCoin, setSelectedCoin }} />
 
           <View className="h-5" />
 
@@ -64,14 +85,17 @@ const ConfigPayment = () => {
 
           <C_Button
             title="Continuar"
-            disabled
+            // disabled
             onPress={handleSubmit(onSubmit)}
           />
         </View>
       </View>
       <View className="flex-1 justify-end">
+        <Text className="mb-2 text-center text-xs text-gray-400">
+          Technical challenge done by @sturmenta
+        </Text>
         <Text className="text-center text-xs text-gray-400">
-          Powered by Bitnovo. | © 2022 Bitnovo. All rights reserved.
+          Powered by Bitnovo. | © 2024 Bitnovo. All rights reserved.
         </Text>
       </View>
     </Screen>

@@ -5,7 +5,6 @@ import {
   ChevronRight,
   InfoIcon
 } from "lucide-react-native"
-import { useState } from "react"
 import { Text, TouchableOpacity, View } from "react-native"
 import { Picker, PickerProps } from "react-native-ui-lib"
 import {
@@ -13,57 +12,35 @@ import {
   PickerValue
 } from "react-native-ui-lib/src/components/picker/types"
 
-import {
-  Svg_Bitcoin,
-  Svg_Ethereum,
-  Svg_Litecoin,
-  Svg_Polygon,
-  Svg_Ripple,
-  Svg_Usdc
-} from "@/assets/crypto_coins"
+import { crypto_coins, CryptoCoin, CryptoCoinLabel } from "@/constants"
+import { getCoinSvg } from "@/utils"
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-const options = [
-  { label: "Bitcoin", value: "BTC" },
-  { label: "Ethereum", value: "ETH" },
-  { label: "Litecoin", value: "LTC" },
-  { label: "Polygon", value: "MATIC" },
-  { label: "Ripple", value: "XRP" },
-  { label: "USD Coin", value: "USDC" }
-]
-
-const getCoinSvg = (coin: string) => {
-  switch (coin) {
-    case "BTC":
-      return Svg_Bitcoin
-    case "ETH":
-      return Svg_Ethereum
-    case "LTC":
-      return Svg_Litecoin
-    case "MATIC":
-      return Svg_Polygon
-    case "XRP":
-      return Svg_Ripple
-    case "USDC":
-      return Svg_Usdc
-    default:
-      return Svg_Bitcoin
-  }
-}
+const options: {
+  label: CryptoCoinLabel
+  value: CryptoCoin
+}[] = Object.keys(crypto_coins).map((coin) => ({
+  label: crypto_coins[coin as CryptoCoin],
+  value: coin as CryptoCoin
+}))
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const CryptoCoinPicker = () => {
-  const [selectedCoin, setSelectedCoin] = useState<{ value: string }>({
-    value: "BTC"
-  })
-
+export const CryptoCoinPicker = ({
+  selectedCoin,
+  setSelectedCoin
+}: {
+  selectedCoin: { value: CryptoCoin }
+  setSelectedCoin: React.Dispatch<React.SetStateAction<{ value: CryptoCoin }>>
+}) => {
   const renderPicker: PickerProps["renderPicker"] = (
     value?: PickerMultiValue | undefined,
     label?: string
   ) => {
-    const CoinSvg = getCoinSvg(value?.toString() || options[0].value)
+    const CoinSvg = getCoinSvg(
+      (value?.toString() as CryptoCoin) || options[0].value
+    )
 
     return (
       <View>
@@ -87,7 +64,9 @@ export const CryptoCoinPicker = () => {
   const renderItem =
     (option: { label: string; value: string }, index: number) =>
     (value: PickerValue) => {
-      const CoinSvg = getCoinSvg(value?.toString() || options[0].value)
+      const CoinSvg = getCoinSvg(
+        (value?.toString() as CryptoCoin) || options[0].value
+      )
       return (
         <>
           {index !== 0 && <View className="border-t border-gray-100" />}
@@ -117,7 +96,9 @@ export const CryptoCoinPicker = () => {
       floatingPlaceholder
       value={selectedCoin.value}
       enableModalBlur={false}
-      onChange={(item) => setSelectedCoin({ value: item?.toString() || "" })}
+      onChange={(item) =>
+        setSelectedCoin({ value: (item?.toString() as CryptoCoin) || "" })
+      }
       topBarProps={{ title: "Seleccionar criptomoneda" }}
       showSearch
       useSafeArea

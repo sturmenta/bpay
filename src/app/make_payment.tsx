@@ -1,9 +1,17 @@
 import { Link } from "expo-router"
+import { useEffect } from "react"
 import { Text, View } from "react-native"
 
 import { Screen } from "@/components/generic"
+import { usePaymentStore } from "@/store"
 
 const MakePayment = () => {
+  const { payment } = usePaymentStore()
+
+  useEffect(() => {
+    console.log(`payment`, payment)
+  }, [payment])
+
   return (
     <Screen>
       <View className="flex-1 items-center justify-center">
