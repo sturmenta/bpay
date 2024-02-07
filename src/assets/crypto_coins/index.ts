@@ -1,0 +1,6 @@
+export { default as Svg_Bitcoin } from "./bitcoin.svg"
+export { default as Svg_Ethereum } from "./ethereum.svg"
+export { default as Svg_Litecoin } from "./litecoin.svg"
+export { default as Svg_Polygon } from "./polygon.svg"
+export { default as Svg_Ripple } from "./ripple.svg"
+export { default as Svg_Usdc } from "./usdc.svg"

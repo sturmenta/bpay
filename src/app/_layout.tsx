@@ -3,6 +3,7 @@ import { useFonts } from "expo-font"
 import { Stack } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { useEffect } from "react"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -25,5 +26,9 @@ export default function RootLayout() {
 
   if (!fontsLoaded) return null
 
-  return <Stack screenOptions={{ headerShown: false }} />
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false }} />
+    </GestureHandlerRootView>
+  )
 }

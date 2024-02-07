@@ -1,6 +1,7 @@
 import { Controller, useForm } from "react-hook-form"
 import { Text, View } from "react-native"
 
+import { CryptoCoinPicker } from "@/components/for_this_app"
 import { C_Button, C_TextInput, Screen } from "@/components/generic"
 
 type Inputs = {
@@ -37,6 +38,10 @@ const ConfigPayment = () => {
             name="payment_amount"
           />
           {/* {errors.payment_amount && <Text>This is required.</Text>} */}
+
+          <View className="h-5" />
+
+          <CryptoCoinPicker />
 
           <View className="h-5" />
 
