@@ -13,31 +13,31 @@ const MakePayment = () => {
 
   return (
     <Screen>
-      <Text className="m-4 mb-0 text-lg">Resumen del pedido</Text>
+      <Text className="m-4 mb-0 text-lg font-medium">Resumen del pedido</Text>
       <C_Card>
         <Row>
-          <Text className="flex flex-1">Importe:</Text>
-          <Text>{payment?.amount} EUR</Text>
+          <Text className="flex flex-1 font-medium">Importe:</Text>
+          <Text className="font-bold">{payment?.amount} EUR</Text>
         </Row>
         <Spacer />
         <Row>
-          <Text className="flex flex-1">Moneda seleccionada:</Text>
+          <Text className="flex flex-1 font-medium">Moneda seleccionada:</Text>
           <CoinSvg height={18} width={18} className="mr-2" />
-          <Text>{payment?.coin}</Text>
+          <Text className="font-medium">{payment?.coin}</Text>
         </Row>
         <Spacer />
         <Row>
-          <Text className="flex flex-1">Comercio:</Text>
+          <Text className="flex flex-1 font-medium">Comercio:</Text>
           <BadgeCheckIcon size={18} className="mr-1 text-cyan-500" />
           <Text>Comercio de pruebas de Semega</Text>
         </Row>
         <Row>
-          <Text className="flex flex-1">Fecha:</Text>
+          <Text className="flex flex-1 font-medium">Fecha:</Text>
           <Text>21/01/2022 08:52</Text>
         </Row>
         <Spacer />
         <Row>
-          <Text className="flex flex-1">Concepto:</Text>
+          <Text className="flex flex-1 font-medium">Concepto:</Text>
           <Text>{payment?.description}</Text>
         </Row>
         {/*  */}

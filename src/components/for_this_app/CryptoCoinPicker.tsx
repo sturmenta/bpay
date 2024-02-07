@@ -45,7 +45,7 @@ export const CryptoCoinPicker = ({
     return (
       <View>
         <View className="mb-1 flex flex-row items-center">
-          <Text className="mr-1">Seleccionar moneda</Text>
+          <Text className="mr-1 font-medium">Seleccionar moneda</Text>
           <TouchableOpacity>
             <InfoIcon color="#aaa" size={12} />
           </TouchableOpacity>

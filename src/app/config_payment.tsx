@@ -46,7 +46,7 @@ const ConfigPayment = () => {
   return (
     <Screen>
       <C_Card>
-        <Text className="p-5 text-center text-2xl">Crear pago</Text>
+        <Text className="p-5 text-center text-2xl font-medium">Crear pago</Text>
         <View className="mt-5">
           <Controller
             control={control}

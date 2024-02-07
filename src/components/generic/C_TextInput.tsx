@@ -8,7 +8,7 @@ export const C_TextInput = ({
 }) => {
   return (
     <View>
-      <Text className="mb-1">{title}</Text>
+      <Text className="mb-1 font-medium">{title}</Text>
       <TextInput className="rounded border border-gray-300 p-2" {...props} />
     </View>
   )
