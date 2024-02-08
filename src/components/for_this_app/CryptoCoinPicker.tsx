@@ -44,14 +44,14 @@ export const CryptoCoinPicker = ({
 
     return (
       <View>
-        <View className="mb-1 flex flex-row items-center">
+        <View className="mb-1 flex-row items-center">
           <Text className="mr-1 font-medium">Seleccionar moneda</Text>
           <TouchableOpacity>
             <InfoIcon color="#aaa" size={12} />
           </TouchableOpacity>
         </View>
-        <View className="flex flex-row items-center rounded border border-gray-300 p-2">
-          <View className="flex flex-1 flex-row items-center">
+        <View className="flex-row items-center rounded border border-gray-300 p-2">
+          <View className="flex-1 flex-row items-center">
             <CoinSvg width={20} height={20} className="mr-2" />
             <Text>{label + " " + value}</Text>
           </View>
@@ -70,9 +70,9 @@ export const CryptoCoinPicker = ({
       return (
         <>
           {index !== 0 && <View className="border-t border-gray-100" />}
-          <View className="flex flex-row items-center p-3 px-5">
+          <View className="flex-row items-center p-3 px-5">
             <CoinSvg width={20} height={20} className="mr-3" />
-            <View className="flex flex-1">
+            <View className="flex-1">
               <Text>{option.label}</Text>
               <Text className="text-xs text-gray-400">{value}</Text>
             </View>
