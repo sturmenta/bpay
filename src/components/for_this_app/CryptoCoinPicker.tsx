@@ -13,7 +13,7 @@ import {
 } from "react-native-ui-lib/src/components/picker/types"
 
 import { crypto_coins, CryptoCoin, CryptoCoinLabel } from "@/constants"
-import { getCoinSvg } from "@/utils"
+import { getCoinSvg } from "@/utils/for_this_app"
 
 // ─────────────────────────────────────────────────────────────────────────────
 

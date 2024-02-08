@@ -5,6 +5,8 @@ import * as SplashScreen from "expo-splash-screen"
 import { useEffect } from "react"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
+import { Root_Toast, toastConfig } from "@/config/toast_config"
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary
@@ -27,8 +29,11 @@ export default function RootLayout() {
   if (!fontsLoaded) return null
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false }} />
-    </GestureHandlerRootView>
+    <>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </GestureHandlerRootView>
+      <Root_Toast config={toastConfig} />
+    </>
   )
 }

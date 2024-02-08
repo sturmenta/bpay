@@ -8,7 +8,7 @@ import { Text, View } from "react-native"
 import { ExpandableSection } from "react-native-ui-lib"
 
 import { Payment_Interface } from "@/store"
-import { getCoinSvg } from "@/utils"
+import { getCoinSvg } from "@/utils/for_this_app"
 
 import { C_Button } from "../generic"
 
