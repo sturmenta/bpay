@@ -2,6 +2,7 @@ import * as Clipboard from "expo-clipboard"
 import { CopyIcon, TimerIcon } from "lucide-react-native"
 import { useState } from "react"
 import {
+  Image,
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
@@ -10,6 +11,7 @@ import {
 import QRCode from "react-native-qrcode-svg"
 import Toast from "react-native-toast-message"
 
+import { image_metamask } from "@/assets/images"
 import { C_Card, Footer, OrderSummary } from "@/components/for_this_app"
 import { Screen } from "@/components/generic"
 import { usePaymentStore } from "@/store"
@@ -63,48 +65,55 @@ const MakePayment = () => {
                 />
               </View>
 
-              {showQrTab ? (
-                <View className="items-center space-y-4 px-8">
-                  <C_Card>
-                    <QRCode value="http://awesome.link.qr" />
-                  </C_Card>
-                  <View className="flex-row space-x-1">
-                    <Text>Enviar</Text>
-                    <Text className="mr-1 font-medium">108,02 XRP</Text>
-                    <TouchableOpacity
-                      onPress={() => copyToClipboard("108,02 XRP")}>
-                      <CopyIcon size={15} />
-                    </TouchableOpacity>
+              <View className="items-center space-y-4 px-8">
+                {showQrTab ? (
+                  <View className="my-5 h-40 w-40 items-center justify-center p-5">
+                    <C_Card>
+                      <QRCode value="http://awesome.link.qr" />
+                    </C_Card>
                   </View>
-                  <View className="flex-row space-x-2">
-                    <Text className="text-center text-xs">
-                      Xp4Lw2PtQgB7RmedTak143LrXp4Lw2PtQgB7RmedEV731CdTak143LrXp4L
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() =>
-                        copyToClipboard(
-                          "Xp4Lw2PtQgB7RmedTak143LrXp4Lw2PtQgB7RmedEV731CdTak143LrXp4L"
-                        )
-                      }>
-                      <CopyIcon size={15} />
-                    </TouchableOpacity>
+                ) : (
+                  <View className="my-5 h-40 w-40 items-center justify-center rounded-lg border border-gray-200 p-5">
+                    <Image
+                      source={image_metamask}
+                      style={{ transform: [{ scale: 0.4 }] }}
+                    />
                   </View>
-                  <View className="flex-row space-x-2">
-                    <View className="h-4 w-4 items-center justify-center rounded-full bg-yellow-400">
-                      <Text className="text-xs font-medium">i</Text>
-                    </View>
-                    <Text className="text-center text-xs">
-                      Etiqueta de destino: 2557164061
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => copyToClipboard("2557164061")}>
-                      <CopyIcon size={15} />
-                    </TouchableOpacity>
-                  </View>
+                )}
+                <View className="flex-row space-x-1">
+                  <Text>Enviar</Text>
+                  <Text className="mr-1 font-medium">108,02 XRP</Text>
+                  <TouchableOpacity
+                    onPress={() => copyToClipboard("108,02 XRP")}>
+                    <CopyIcon size={15} />
+                  </TouchableOpacity>
                 </View>
-              ) : (
-                <Text>Web3</Text>
-              )}
+                <View className="flex-row space-x-2">
+                  <Text className="text-center text-xs">
+                    Xp4Lw2PtQgB7RmedTak143LrXp4Lw2PtQgB7RmedEV731CdTak143LrXp4L
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      copyToClipboard(
+                        "Xp4Lw2PtQgB7RmedTak143LrXp4Lw2PtQgB7RmedEV731CdTak143LrXp4L"
+                      )
+                    }>
+                    <CopyIcon size={15} />
+                  </TouchableOpacity>
+                </View>
+                <View className="flex-row space-x-2">
+                  <View className="h-4 w-4 items-center justify-center rounded-full bg-yellow-400">
+                    <Text className="text-xs font-medium">i</Text>
+                  </View>
+                  <Text className="text-center text-xs">
+                    Etiqueta de destino: 2557164061
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => copyToClipboard("2557164061")}>
+                    <CopyIcon size={15} />
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </C_Card>
         </>
