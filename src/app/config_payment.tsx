@@ -40,6 +40,9 @@ const ConfigPayment = () => {
       coin: selectedCoin.value
     })
 
+    const x_device_id = process.env.EXPO_PUBLIC_X_DEVICE_ID
+    console.log(`x_device_id`, x_device_id)
+
     router.push("/make_payment")
   }
 
