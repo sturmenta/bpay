@@ -31,6 +31,8 @@ yarn-error.*
 # local env files
 .env*.local
 .env
+# for not saving the sensitive postman env vars (after changes)
+bitnovo - bpay.postman_environment.json
 
 # typescript
 *.tsbuildinfo
