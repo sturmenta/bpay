@@ -5,7 +5,6 @@ import { Text, View } from "react-native"
 
 import { C_Card, CryptoCoinPicker, Footer } from "@/components/for_this_app"
 import { C_Button, C_TextInput, Screen } from "@/components/generic"
-import { CryptoCoin } from "@/constants"
 import { usePaymentStore } from "@/store"
 
 type Inputs = {
@@ -14,9 +13,11 @@ type Inputs = {
 }
 
 const ConfigPayment = () => {
-  const [selectedCoin, setSelectedCoin] = useState<{ value: CryptoCoin }>({
-    value: "BTC"
-  })
+  const [selectedCoin, setSelectedCoin] = useState<{
+    value: Currency["symbol"]
+  }>({ value: "" })
+  const [selectedCoinImage, setSelectedCoinImage] =
+    useState<Currency["symbol"]>("")
   const [ctaButtonEnabled, setCtaButtonEnabled] = useState(false)
 
   const { setPayment } = usePaymentStore()
@@ -24,9 +25,7 @@ const ConfigPayment = () => {
 
   // ─────────────────────────────────────────────────────────────────────
 
-  const { control, handleSubmit, getValues, watch } = useForm<Inputs>({
-    defaultValues: { payment_amount: "222", description: "alo" }
-  })
+  const { control, handleSubmit, getValues, watch } = useForm<Inputs>()
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -34,7 +33,8 @@ const ConfigPayment = () => {
     setPayment({
       amount: parseFloat(data.payment_amount),
       description: data.description,
-      coin: selectedCoin.value
+      coin: selectedCoin.value,
+      image: selectedCoinImage
     })
 
     router.push("/make_payment")
@@ -78,7 +78,8 @@ const ConfigPayment = () => {
             {...{
               selectedCoin,
               setSelectedCoin,
-              payment_amount: parseFloat(getValues("payment_amount"))
+              payment_amount: parseFloat(getValues("payment_amount")),
+              setSelectedCoinImage
             }}
           />
 

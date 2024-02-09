@@ -4,11 +4,10 @@ import {
   ChevronUpIcon
 } from "lucide-react-native"
 import { Dispatch, SetStateAction, useState } from "react"
-import { Text, View } from "react-native"
+import { Image, Text, View } from "react-native"
 import { ExpandableSection } from "react-native-ui-lib"
 
 import { Payment_Interface } from "@/store"
-import { getCoinSvg } from "@/utils/for_this_app"
 
 import { C_Button } from "../generic"
 
@@ -24,8 +23,6 @@ export const OrderSummary = ({
   payment: Payment_Interface
 }) => {
   const [orderSummaryCollapsed, setOrderSummaryCollapsed] = useState(false)
-
-  const CoinSvg = getCoinSvg(payment!.coin)
 
   return (
     <ExpandableSection
@@ -50,7 +47,12 @@ export const OrderSummary = ({
         <Spacer />
         <Row>
           <Text className="flex-1 font-medium">Moneda seleccionada:</Text>
-          <CoinSvg height={18} width={18} className="mr-2" />
+          <Image
+            source={{ uri: payment.image }}
+            height={20}
+            width={20}
+            className="mr-2"
+          />
           <Text className="font-medium">{payment?.coin}</Text>
         </Row>
         <Spacer />

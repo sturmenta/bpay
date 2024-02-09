@@ -1,4 +1,3 @@
-// TODO: make the list of the currencies dynamic with the backend-data
 // TODO: filter the currencies showed by input changes (min/max amounts for every currency)
 
 // import { useQuery } from "@tanstack/react-query"
@@ -11,7 +10,13 @@ import {
   InfoIcon
 } from "lucide-react-native"
 import { useEffect } from "react"
-import { Text, TouchableOpacity, View } from "react-native"
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native"
 import { Picker, PickerProps } from "react-native-ui-lib"
 import {
   PickerMultiValue,
@@ -20,35 +25,33 @@ import {
 
 // import { AXIOS_BASE_CONFIG } from "@/config"
 import {
+  colors,
   // BASE_API_URL,
-  crypto_coins,
-  CryptoCoin,
-  CryptoCoinLabel
+  MOCKED_CURRENCIES_LIST
 } from "@/constants"
+
 // import { useFocusNotifyOnChangeProps } from "@/hooks"
-import { getCoinSvg } from "@/utils/for_this_app"
 
 import { FullScreenLoading } from "../generic"
 
-// ─────────────────────────────────────────────────────────────────────────────
-
-const options: {
-  label: CryptoCoinLabel
-  value: CryptoCoin
-}[] = Object.keys(crypto_coins).map((coin) => ({
-  label: crypto_coins[coin as CryptoCoin],
-  value: coin as CryptoCoin
-}))
+type PickerOption = {
+  value: Currency["symbol"]
+  label: Currency["name"]
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CryptoCoinPicker = ({
   selectedCoin,
   setSelectedCoin,
+  setSelectedCoinImage,
   payment_amount
 }: {
-  selectedCoin: { value: CryptoCoin }
-  setSelectedCoin: React.Dispatch<React.SetStateAction<{ value: CryptoCoin }>>
+  selectedCoin: { value: Currency["symbol"] }
+  setSelectedCoin: React.Dispatch<
+    React.SetStateAction<{ value: Currency["symbol"] }>
+  >
+  setSelectedCoinImage: React.Dispatch<React.SetStateAction<Currency["image"]>>
   payment_amount?: number
 }) => {
   // const notifyOnChangeProps = useFocusNotifyOnChangeProps()
@@ -64,13 +67,16 @@ export const CryptoCoinPicker = ({
 
   const isLoading = false
   const error = { message: "" }
-  const data = undefined // TODO: use mocked data to not make the request and not get 429 for server overload
+  const data = MOCKED_CURRENCIES_LIST // TODO: use mocked data to not make the request and not get 429 for server overload
   const isFetching = false
 
   // ─────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (data) console.log(`data`, data)
+    if (data) {
+      setSelectedCoin({ value: data[0].symbol })
+      setSelectedCoinImage(data[0].image)
+    }
   }, [data])
 
   useEffect(() => {
@@ -83,9 +89,7 @@ export const CryptoCoinPicker = ({
     value?: PickerMultiValue | undefined,
     label?: string
   ) => {
-    const CoinSvg = getCoinSvg(
-      (value?.toString() as CryptoCoin) || options[0].value
-    )
+    const imageUri = getCurrencyImage(data, value!.toString())
 
     return (
       <View>
@@ -97,7 +101,16 @@ export const CryptoCoinPicker = ({
         </View>
         <View className="flex-row items-center rounded border border-gray-300 p-2">
           <View className="flex-1 flex-row items-center">
-            <CoinSvg width={20} height={20} className="mr-2" />
+            {!imageUri ? (
+              <ActivityIndicator color={colors.bitnovo} size="small" />
+            ) : (
+              <Image
+                source={{ uri: imageUri }}
+                width={20}
+                height={20}
+                className="mr-2"
+              />
+            )}
             <Text>{label + " " + value}</Text>
           </View>
           <ChevronDown color="#ccc" size={15} />
@@ -107,16 +120,23 @@ export const CryptoCoinPicker = ({
   }
 
   const renderItem =
-    (option: { label: string; value: string }, index: number) =>
-    (value: PickerValue) => {
-      const CoinSvg = getCoinSvg(
-        (value?.toString() as CryptoCoin) || options[0].value
-      )
+    (option: PickerOption, index: number) => (value: PickerValue) => {
+      const imageUri = getCurrencyImage(data, value!.toString())
+
       return (
         <>
           {index !== 0 && <View className="border-t border-gray-100" />}
           <View className="flex-row items-center p-3 px-5">
-            <CoinSvg width={20} height={20} className="mr-3" />
+            {!imageUri ? (
+              <ActivityIndicator color={colors.bitnovo} size="small" />
+            ) : (
+              <Image
+                source={{ uri: imageUri }}
+                width={30}
+                height={30}
+                className="mr-3"
+              />
+            )}
             <View className="flex-1">
               <Text>{option.label}</Text>
               <Text className="text-xs text-gray-400">{value}</Text>
@@ -141,7 +161,13 @@ export const CryptoCoinPicker = ({
         <FullScreenLoading />
       </View>
     )
-  if (error)
+  if (data.length === 0)
+    return (
+      <View className="p-10">
+        <Text>ERROR: No currencies found</Text>
+      </View>
+    )
+  if (error && error.message)
     return (
       <View className="p-10">
         <Text>{`ERROR: an error occurred while trying to get the currencies\n\n${error.message}`}</Text>
@@ -154,16 +180,17 @@ export const CryptoCoinPicker = ({
       floatingPlaceholder
       value={selectedCoin.value}
       enableModalBlur={false}
-      onChange={(item) =>
-        setSelectedCoin({ value: (item?.toString() as CryptoCoin) || "" })
-      }
+      onChange={(item) => {
+        setSelectedCoin({ value: item!.toString() })
+        setSelectedCoinImage(getCurrencyImage(data, item!.toString()))
+      }}
       topBarProps={{ title: "Seleccionar criptomoneda" }}
       showSearch
       useSafeArea
       searchPlaceholder="Buscar"
       searchStyle={{ color: "#333", placeholderTextColor: "#ccc" }}
       renderPicker={renderPicker}>
-      {_.map(options, (option, index) => (
+      {_.map(generatePickerOptions(data), (option, index) => (
         <Picker.Item
           key={option.value}
           value={option.value}
@@ -173,6 +200,19 @@ export const CryptoCoinPicker = ({
       ))}
     </Picker>
   )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+const generatePickerOptions = (data: Currency[]): PickerOption[] =>
+  _.map(data, (currency: Currency) => ({
+    label: currency.name,
+    value: currency.symbol
+  }))
+
+const getCurrencyImage = (data: Currency[], value: Currency["symbol"]) => {
+  const currency = _.find(data, { symbol: value })
+  return currency?.image || ""
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -138,14 +138,14 @@ const MakePayment = () => {
           </>
         )}
         {/*  */}
-        <View className="p-10">
+        {/* <View className="p-10">
           <C_Button
             title="Go to payment outcome - success"
             onPress={onSuccess}
           />
           <View className="h-5" />
           <C_Button title="Go to payment outcome - error" onPress={onError} />
-        </View>
+        </View> */}
       </ScrollView>
       {/*  */}
       <Footer noFlex1 />

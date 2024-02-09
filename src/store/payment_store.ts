@@ -1,12 +1,11 @@
 import { create } from "zustand"
 import { useShallow } from "zustand/react/shallow"
 
-import { CryptoCoin } from "@/constants"
-
 export interface Payment_Interface {
   amount: number
   description: string
-  coin: CryptoCoin
+  coin: Currency["symbol"]
+  image: Currency["image"]
 }
 
 interface State {
