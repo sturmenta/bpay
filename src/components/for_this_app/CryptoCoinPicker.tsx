@@ -1,5 +1,3 @@
-// TODO: filter the currencies showed by input changes (min/max amounts for every currency)
-
 // import { useQuery } from "@tanstack/react-query"
 // import axios from "axios"
 import _ from "lodash"
@@ -9,7 +7,7 @@ import {
   ChevronRight,
   InfoIcon
 } from "lucide-react-native"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import {
   ActivityIndicator,
   Image,
@@ -17,6 +15,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native"
+import Toast from "react-native-toast-message"
 import { Picker, PickerProps } from "react-native-ui-lib"
 import {
   PickerMultiValue,
@@ -37,6 +36,12 @@ import { FullScreenLoading } from "../generic"
 type PickerOption = {
   value: Currency["symbol"]
   label: Currency["name"]
+  image: Currency["image"]
+}
+
+export type SelectedCurrency_Type = {
+  value: Currency["symbol"]
+  image: Currency["image"]
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -44,16 +49,13 @@ type PickerOption = {
 export const CryptoCoinPicker = ({
   selectedCoin,
   setSelectedCoin,
-  setSelectedCoinImage,
-  payment_amount
+  paymentAmount
 }: {
-  selectedCoin: { value: Currency["symbol"] }
-  setSelectedCoin: React.Dispatch<
-    React.SetStateAction<{ value: Currency["symbol"] }>
-  >
-  setSelectedCoinImage: React.Dispatch<React.SetStateAction<Currency["image"]>>
-  payment_amount?: number
+  selectedCoin: SelectedCurrency_Type
+  setSelectedCoin: React.Dispatch<React.SetStateAction<SelectedCurrency_Type>>
+  paymentAmount?: number
 }) => {
+  const [pickerOptions, setPickerOptions] = useState<PickerOption[]>([])
   // const notifyOnChangeProps = useFocusNotifyOnChangeProps()
 
   // const { isLoading, error, data, isFetching } = useQuery({
@@ -73,26 +75,52 @@ export const CryptoCoinPicker = ({
   // ─────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (data) {
-      setSelectedCoin({ value: data[0].symbol })
-      setSelectedCoinImage(data[0].image)
-    }
-  }, [data])
-
-  useEffect(() => {
     if (error) console.log(`error`, error)
   }, [error])
 
+  useEffect(() => {
+    if (data) {
+      const _pickerOptions = generatePickerOptions(data, paymentAmount || 0)
+
+      console.log("render")
+
+      // if there are options, set the first one as the default selected
+      if (_pickerOptions[0] && Object.keys(_pickerOptions[0]).length) {
+        setPickerOptions(_pickerOptions)
+        setSelectedCoin({
+          value: _pickerOptions[0].value,
+          image: _pickerOptions[0].image
+        })
+        Toast.hide()
+      } else {
+        // if there are no options, set the pickerOptions to an empty array and show a toast error
+        setPickerOptions(_pickerOptions)
+        setSelectedCoin({ value: "", image: "" })
+        showToastError_noOptions()
+      }
+    }
+  }, [paymentAmount, data])
+
   // ─────────────────────────────────────────────────────────────────────
+
+  const showToastError_noOptions = () =>
+    Toast.show({
+      type: "error",
+      text1: "No hay opciones disponibles ❌",
+      text1Style: { fontSize: 13 },
+      text2: "Prueba cambiando el importe ingresado",
+      text2Style: { fontSize: 13, marginTop: 2 }
+    })
 
   const renderPicker: PickerProps["renderPicker"] = (
     value?: PickerMultiValue | undefined,
     label?: string
   ) => {
-    const imageUri = getCurrencyImage(data, value!.toString())
+    const imageUri = value ? getCurrencyImage(data, value.toString()) : ""
 
     return (
-      <View>
+      <TouchableOpacity
+        onPress={() => (!value ? showToastError_noOptions() : null)}>
         <View className="mb-1 flex-row items-center">
           <Text className="mr-1 font-medium">Seleccionar moneda</Text>
           <TouchableOpacity>
@@ -101,21 +129,27 @@ export const CryptoCoinPicker = ({
         </View>
         <View className="flex-row items-center rounded border border-gray-300 p-2">
           <View className="flex-1 flex-row items-center">
-            {!imageUri ? (
-              <ActivityIndicator color={colors.bitnovo} size="small" />
+            {!value && !label ? (
+              <Text>No hay opciones disponibles ❌</Text>
             ) : (
-              <Image
-                source={{ uri: imageUri }}
-                width={20}
-                height={20}
-                className="mr-2"
-              />
+              <>
+                {!imageUri ? (
+                  <ActivityIndicator color={colors.bitnovo} size="small" />
+                ) : (
+                  <Image
+                    source={{ uri: imageUri }}
+                    width={20}
+                    height={20}
+                    className="mr-2"
+                  />
+                )}
+                <Text>{`${label || ""} ${value || ""}`}</Text>
+              </>
             )}
-            <Text>{label + " " + value}</Text>
           </View>
           <ChevronDown color="#ccc" size={15} />
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 
@@ -174,6 +208,9 @@ export const CryptoCoinPicker = ({
       </View>
     )
 
+  // if no picker options -> return a "freezed-no-options" picker and when touched fire the toast error again
+  if (pickerOptions.length === 0) return renderPicker(undefined, "")
+
   return (
     <Picker
       placeholder="Seleccionar criptomoneda"
@@ -181,8 +218,10 @@ export const CryptoCoinPicker = ({
       value={selectedCoin.value}
       enableModalBlur={false}
       onChange={(item) => {
-        setSelectedCoin({ value: item!.toString() })
-        setSelectedCoinImage(getCurrencyImage(data, item!.toString()))
+        setSelectedCoin({
+          value: item!.toString(),
+          image: getCurrencyImage(data, item!.toString())
+        })
       }}
       topBarProps={{ title: "Seleccionar criptomoneda" }}
       showSearch
@@ -190,7 +229,7 @@ export const CryptoCoinPicker = ({
       searchPlaceholder="Buscar"
       searchStyle={{ color: "#333", placeholderTextColor: "#ccc" }}
       renderPicker={renderPicker}>
-      {_.map(generatePickerOptions(data), (option, index) => (
+      {_.map(pickerOptions, (option, index) => (
         <Picker.Item
           key={option.value}
           value={option.value}
@@ -204,16 +243,31 @@ export const CryptoCoinPicker = ({
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-const generatePickerOptions = (data: Currency[]): PickerOption[] =>
-  _.map(data, (currency: Currency) => ({
-    label: currency.name,
-    value: currency.symbol
-  }))
+const generatePickerOptions = (
+  data: Currency[],
+  paymentAmount: number
+): PickerOption[] => {
+  // make allOptions comply with min and max amounts
+  const optionsFilteredByPaymentAmount = data.filter(
+    (option) =>
+      paymentAmount >= parseFloat(option.min_amount) &&
+      paymentAmount <= parseFloat(option.max_amount)
+  )
 
-const getCurrencyImage = (data: Currency[], value: Currency["symbol"]) => {
-  const currency = _.find(data, { symbol: value })
-  return currency?.image || ""
+  const pickerOptions = _.map(
+    optionsFilteredByPaymentAmount,
+    (currency: Currency) => ({
+      label: currency.name,
+      value: currency.symbol,
+      image: currency.image
+    })
+  )
+
+  return pickerOptions
 }
+
+const getCurrencyImage = (data: Currency[], value: Currency["symbol"]) =>
+  _.find(data, { symbol: value })?.image || ""
 
 // ─────────────────────────────────────────────────────────────────────────────
 

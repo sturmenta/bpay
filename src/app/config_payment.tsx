@@ -2,8 +2,14 @@ import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { Text, View } from "react-native"
+import Toast from "react-native-toast-message"
 
-import { C_Card, CryptoCoinPicker, Footer } from "@/components/for_this_app"
+import {
+  C_Card,
+  CryptoCoinPicker,
+  Footer,
+  SelectedCurrency_Type
+} from "@/components/for_this_app"
 import { C_Button, C_TextInput, Screen } from "@/components/generic"
 import { usePaymentStore } from "@/store"
 
@@ -12,20 +18,56 @@ type Inputs = {
   description: string
 }
 
-const ConfigPayment = () => {
-  const [selectedCoin, setSelectedCoin] = useState<{
-    value: Currency["symbol"]
-  }>({ value: "" })
-  const [selectedCoinImage, setSelectedCoinImage] =
-    useState<Currency["symbol"]>("")
-  const [ctaButtonEnabled, setCtaButtonEnabled] = useState(false)
+// to not show "no options" when start and have better user experience
+const PAYMENT_AMOUNT__START_VALUE = 0.5
 
+const ConfigPayment = () => {
   const { setPayment } = usePaymentStore()
   const router = useRouter()
+  const { control, handleSubmit, watch } = useForm<Inputs>({
+    defaultValues: {
+      payment_amount: PAYMENT_AMOUNT__START_VALUE.toString().replace(".", ","),
+      description: ""
+    }
+  })
 
   // ─────────────────────────────────────────────────────────────────────
 
-  const { control, handleSubmit, getValues, watch } = useForm<Inputs>()
+  const [selectedCoin, setSelectedCoin] = useState<SelectedCurrency_Type>({
+    value: "",
+    image: ""
+  })
+  const [ctaButtonEnabled, setCtaButtonEnabled] = useState(false)
+  const [paymentAmount, setPaymentAmount] = useState<number | undefined>(
+    PAYMENT_AMOUNT__START_VALUE
+  )
+
+  // ─────────────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      // check if the fields are filled to enable the button
+      setCtaButtonEnabled(Boolean(value.description && value.payment_amount))
+
+      // only one comma is allowed
+      if (value.payment_amount?.replace(",", ".").includes(",")) {
+        Toast.show({
+          type: "error",
+          text1: "Error ❌",
+          text1Style: { fontSize: 13 },
+          text2: "El importe debe ser un número válido",
+          text2Style: { fontSize: 13, marginTop: 2 }
+        })
+        setCtaButtonEnabled(false)
+      } else {
+        setPaymentAmount(
+          parseFloat(value.payment_amount?.replace(",", ".") || "0")
+        )
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch])
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -34,20 +76,11 @@ const ConfigPayment = () => {
       amount: parseFloat(data.payment_amount),
       description: data.description,
       coin: selectedCoin.value,
-      image: selectedCoinImage
+      image: selectedCoin.image
     })
 
     router.push("/make_payment")
   }
-
-  // ─────────────────────────────────────────────────────────────────────
-
-  useEffect(() => {
-    const subscription = watch((value) => {
-      setCtaButtonEnabled(Boolean(value.description && value.payment_amount))
-    })
-    return () => subscription.unsubscribe()
-  }, [watch])
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -78,8 +111,7 @@ const ConfigPayment = () => {
             {...{
               selectedCoin,
               setSelectedCoin,
-              payment_amount: parseFloat(getValues("payment_amount")),
-              setSelectedCoinImage
+              paymentAmount
             }}
           />
 
@@ -104,7 +136,7 @@ const ConfigPayment = () => {
 
           <C_Button
             title="Continuar"
-            disabled={!ctaButtonEnabled}
+            disabled={!(ctaButtonEnabled && selectedCoin.value)}
             onPress={handleSubmit(onSubmit)}
           />
         </View>
