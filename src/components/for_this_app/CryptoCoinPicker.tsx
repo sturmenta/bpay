@@ -1,8 +1,8 @@
 // TODO: make the list of the currencies dynamic with the backend-data
 // TODO: filter the currencies showed by input changes (min/max amounts for every currency)
 
-import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+// import { useQuery } from "@tanstack/react-query"
+// import axios from "axios"
 import _ from "lodash"
 import {
   CheckIcon,
@@ -18,14 +18,14 @@ import {
   PickerValue
 } from "react-native-ui-lib/src/components/picker/types"
 
-import { AXIOS_BASE_CONFIG } from "@/config"
+// import { AXIOS_BASE_CONFIG } from "@/config"
 import {
-  BASE_API_URL,
+  // BASE_API_URL,
   crypto_coins,
   CryptoCoin,
   CryptoCoinLabel
 } from "@/constants"
-import { useFocusNotifyOnChangeProps } from "@/hooks"
+// import { useFocusNotifyOnChangeProps } from "@/hooks"
 import { getCoinSvg } from "@/utils/for_this_app"
 
 import { FullScreenLoading } from "../generic"
@@ -51,16 +51,21 @@ export const CryptoCoinPicker = ({
   setSelectedCoin: React.Dispatch<React.SetStateAction<{ value: CryptoCoin }>>
   payment_amount?: number
 }) => {
-  const notifyOnChangeProps = useFocusNotifyOnChangeProps()
+  // const notifyOnChangeProps = useFocusNotifyOnChangeProps()
 
-  const { isLoading, error, data, isFetching } = useQuery({
-    queryKey: ["getCurrencies"],
-    queryFn: () =>
-      axios
-        .get(`${BASE_API_URL}/currencies`, AXIOS_BASE_CONFIG)
-        .then((res) => res.data),
-    notifyOnChangeProps
-  })
+  // const { isLoading, error, data, isFetching } = useQuery({
+  //   queryKey: ["getCurrencies"],
+  //   queryFn: () =>
+  //     axios
+  //       .get(`${BASE_API_URL}/currencies`, AXIOS_BASE_CONFIG)
+  //       .then((res) => res.data),
+  //   notifyOnChangeProps
+  // })
+
+  const isLoading = false
+  const error = { message: "" }
+  const data = undefined // TODO: use mocked data to not make the request and not get 429 for server overload
+  const isFetching = false
 
   // ─────────────────────────────────────────────────────────────────────
 
