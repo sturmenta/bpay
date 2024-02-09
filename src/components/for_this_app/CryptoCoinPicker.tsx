@@ -75,14 +75,8 @@ export const CryptoCoinPicker = ({
   // ─────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (error) console.log(`error`, error)
-  }, [error])
-
-  useEffect(() => {
     if (data) {
       const _pickerOptions = generatePickerOptions(data, paymentAmount || 0)
-
-      console.log("render")
 
       // if there are options, set the first one as the default selected
       if (_pickerOptions[0] && Object.keys(_pickerOptions[0]).length) {
