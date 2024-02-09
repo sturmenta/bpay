@@ -1,7 +1,5 @@
-// TODO: Add form validation
-
 import { useRouter } from "expo-router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { Text, View } from "react-native"
 
@@ -19,19 +17,18 @@ const ConfigPayment = () => {
   const [selectedCoin, setSelectedCoin] = useState<{ value: CryptoCoin }>({
     value: "BTC"
   })
+  const [ctaButtonEnabled, setCtaButtonEnabled] = useState(false)
+
   const { setPayment } = usePaymentStore()
   const router = useRouter()
 
-  const {
-    control,
-    handleSubmit
-    // formState: { errors }
-  } = useForm<Inputs>({
-    defaultValues: {
-      payment_amount: "222",
-      description: "alo"
-    }
+  // ─────────────────────────────────────────────────────────────────────
+
+  const { control, handleSubmit, getValues, watch } = useForm<Inputs>({
+    defaultValues: { payment_amount: "222", description: "alo" }
   })
+
+  // ─────────────────────────────────────────────────────────────────────
 
   const onSubmit = (data: { payment_amount: string; description: string }) => {
     setPayment({
@@ -40,11 +37,19 @@ const ConfigPayment = () => {
       coin: selectedCoin.value
     })
 
-    const x_device_id = process.env.EXPO_PUBLIC_X_DEVICE_ID
-    console.log(`x_device_id`, x_device_id)
-
     router.push("/make_payment")
   }
+
+  // ─────────────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      setCtaButtonEnabled(Boolean(value.description && value.payment_amount))
+    })
+    return () => subscription.unsubscribe()
+  }, [watch])
+
+  // ─────────────────────────────────────────────────────────────────────
 
   return (
     <Screen>
@@ -66,11 +71,16 @@ const ConfigPayment = () => {
             )}
             name="payment_amount"
           />
-          {/* {errors.payment_amount && <Text>This is required.</Text>} */}
 
           <View className="h-5" />
 
-          <CryptoCoinPicker {...{ selectedCoin, setSelectedCoin }} />
+          <CryptoCoinPicker
+            {...{
+              selectedCoin,
+              setSelectedCoin,
+              payment_amount: parseFloat(getValues("payment_amount"))
+            }}
+          />
 
           <View className="h-5" />
 
@@ -93,7 +103,7 @@ const ConfigPayment = () => {
 
           <C_Button
             title="Continuar"
-            // disabled
+            disabled={!ctaButtonEnabled}
             onPress={handleSubmit(onSubmit)}
           />
         </View>

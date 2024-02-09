@@ -4,11 +4,11 @@ import { Image, Text, View } from "react-native"
 import { image_error, image_success } from "@/assets/images"
 import { C_Card, Footer } from "@/components/for_this_app"
 import { C_Button, Screen } from "@/components/generic"
+import { colors } from "@/constants"
 import { usePaymentOutcomeStore } from "@/store"
 
 const PaymentOutcome = () => {
   const router = useRouter()
-
   const { paymentOutcome } = usePaymentOutcomeStore()
 
   return (
@@ -32,7 +32,7 @@ const PaymentOutcome = () => {
             <C_Button
               title="Crear nuevo pago"
               onPress={() => router.replace("/config_payment")}
-              style={{ backgroundColor: "#285ac5", width: "100%" }}
+              style={{ backgroundColor: colors.bitnovo, width: "100%" }}
             />
           </View>
         </C_Card>

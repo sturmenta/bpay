@@ -1,3 +1,4 @@
+// TODO: make this list with the currencies get from backend
 export const crypto_coins = {
   BTC: "Bitcoin",
   ETH: "Ethereum",

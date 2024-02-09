@@ -1,3 +1,8 @@
+// TODO: make the list of the currencies dynamic with the backend-data
+// TODO: filter the currencies showed by input changes (min/max amounts for every currency)
+
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import _ from "lodash"
 import {
   CheckIcon,
@@ -5,6 +10,7 @@ import {
   ChevronRight,
   InfoIcon
 } from "lucide-react-native"
+import { useEffect } from "react"
 import { Text, TouchableOpacity, View } from "react-native"
 import { Picker, PickerProps } from "react-native-ui-lib"
 import {
@@ -12,8 +18,17 @@ import {
   PickerValue
 } from "react-native-ui-lib/src/components/picker/types"
 
-import { crypto_coins, CryptoCoin, CryptoCoinLabel } from "@/constants"
+import { AXIOS_BASE_CONFIG } from "@/config"
+import {
+  BASE_API_URL,
+  crypto_coins,
+  CryptoCoin,
+  CryptoCoinLabel
+} from "@/constants"
+import { useFocusNotifyOnChangeProps } from "@/hooks"
 import { getCoinSvg } from "@/utils/for_this_app"
+
+import { FullScreenLoading } from "../generic"
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -29,11 +44,36 @@ const options: {
 
 export const CryptoCoinPicker = ({
   selectedCoin,
-  setSelectedCoin
+  setSelectedCoin,
+  payment_amount
 }: {
   selectedCoin: { value: CryptoCoin }
   setSelectedCoin: React.Dispatch<React.SetStateAction<{ value: CryptoCoin }>>
+  payment_amount?: number
 }) => {
+  const notifyOnChangeProps = useFocusNotifyOnChangeProps()
+
+  const { isLoading, error, data, isFetching } = useQuery({
+    queryKey: ["getCurrencies"],
+    queryFn: () =>
+      axios
+        .get(`${BASE_API_URL}/currencies`, AXIOS_BASE_CONFIG)
+        .then((res) => res.data),
+    notifyOnChangeProps
+  })
+
+  // ─────────────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (data) console.log(`data`, data)
+  }, [data])
+
+  useEffect(() => {
+    if (error) console.log(`error`, error)
+  }, [error])
+
+  // ─────────────────────────────────────────────────────────────────────
+
   const renderPicker: PickerProps["renderPicker"] = (
     value?: PickerMultiValue | undefined,
     label?: string
@@ -89,6 +129,19 @@ export const CryptoCoinPicker = ({
         </>
       )
     }
+
+  if (isLoading || isFetching)
+    return (
+      <View className="p-10">
+        <FullScreenLoading />
+      </View>
+    )
+  if (error)
+    return (
+      <View className="p-10">
+        <Text>{`ERROR: an error occurred while trying to get the currencies\n\n${error.message}`}</Text>
+      </View>
+    )
 
   return (
     <Picker

@@ -1,5 +1,7 @@
 import { Text, TouchableOpacity, TouchableOpacityProps } from "react-native"
 
+import { colors } from "@/constants"
+
 export const C_Button = ({
   title,
   disabled,
@@ -7,7 +9,7 @@ export const C_Button = ({
 }: TouchableOpacityProps & { disabled?: boolean; title: string }) => {
   return (
     <TouchableOpacity
-      className={`items-center rounded-lg ${disabled ? "bg-blue-200" : "bg-blue-500"} p-3 text-white`}
+      className={`items-center rounded-lg ${disabled ? "bg-blue-200" : colors.bitnovo_tailwind} p-3 text-white`}
       disabled={disabled}
       onPress={disabled ? () => {} : props.onPress}
       {...props}>

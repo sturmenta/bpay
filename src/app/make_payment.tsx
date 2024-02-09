@@ -15,18 +15,19 @@ import Toast from "react-native-toast-message"
 
 import { image_metamask } from "@/assets/images"
 import { C_Card, Footer, OrderSummary } from "@/components/for_this_app"
-import { C_Button, Screen } from "@/components/generic"
+import { C_Button, FullScreenText, Screen } from "@/components/generic"
+import { colors } from "@/constants"
 import { usePaymentOutcomeStore, usePaymentStore } from "@/store"
 
 const MakePayment = () => {
+  const router = useRouter()
+  const { payment } = usePaymentStore()
+  const { setPaymentOutcome } = usePaymentOutcomeStore()
+
   const [orderSummaryViewedOnce, setOrderSummaryViewedOnce] = useState(false)
   const [showQrTab, setShowQrTab] = useState(true)
 
-  const router = useRouter()
-
-  const { payment } = usePaymentStore()
-  const { setPaymentOutcome } = usePaymentOutcomeStore()
-  if (!payment) return null
+  if (!payment) return <FullScreenText text="ERROR: No payment data" />
 
   const copyToClipboard = async (text: string) => {
     await Clipboard.setStringAsync(text)
@@ -172,7 +173,7 @@ const SmallButton = ({
   <TouchableOpacity
     {...props}
     onPress={onPress}
-    className={`rounded-full ${selected ? "bg-blue-800" : "bg-gray-100"} p-1 px-3`}>
+    className={`rounded-full ${selected ? colors.bitnovo_tailwind : "bg-gray-100"} p-1 px-3`}>
     <Text
       className={`text-sm font-medium ${selected ? "text-white" : "text-gray-600"}`}>
       {title}

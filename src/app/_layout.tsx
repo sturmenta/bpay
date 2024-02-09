@@ -1,18 +1,20 @@
 import { CourierPrime_400Regular } from "@expo-google-fonts/courier-prime"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useFonts } from "expo-font"
 import { Stack } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import { useEffect } from "react"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
-import { Root_Toast, toastConfig } from "@/config/toast_config"
+import { FullScreenLoading } from "@/components/generic"
+import { Root_Toast, toastConfig } from "@/config"
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary
-} from "expo-router"
+// Catch any errors thrown by the Layout component.
+export { ErrorBoundary } from "expo-router"
 
 SplashScreen.preventAutoHideAsync()
+
+const queryClient = new QueryClient()
 
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({ Courier: CourierPrime_400Regular })
@@ -26,14 +28,14 @@ export default function RootLayout() {
     if (fontsLoaded) SplashScreen.hideAsync()
   }, [fontsLoaded])
 
-  if (!fontsLoaded) return null
+  if (!fontsLoaded) return <FullScreenLoading />
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false }} />
+        <Root_Toast config={toastConfig} />
       </GestureHandlerRootView>
-      <Root_Toast config={toastConfig} />
-    </>
+    </QueryClientProvider>
   )
 }
