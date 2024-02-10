@@ -22,7 +22,7 @@ import {
   PickerValue
 } from "react-native-ui-lib/src/components/picker/types"
 
-import { AXIOS_BASE_CONFIG, USE_MOCKED_CURRENCIES } from "@/config"
+import { AXIOS_BASE_CONFIG, USE_MOCKED__CURRENCIES } from "@/config"
 import { BASE_API_URL, colors } from "@/constants"
 import { MOCKED_CURRENCIES_LIST } from "@/mocked_data"
 
@@ -53,9 +53,9 @@ export const CryptoCoinPicker = ({
   disabled?: boolean
 }) => {
   const { isPending, isError, data, error } = useQuery({
-    enabled: !USE_MOCKED_CURRENCIES, // NOTE: use mocked data to not get 429 for server overload
+    enabled: !USE_MOCKED__CURRENCIES, // NOTE: use mocked data to not get 429 for server overload
     queryKey: ["getCurrencies"],
-    initialData: USE_MOCKED_CURRENCIES ? MOCKED_CURRENCIES_LIST : undefined,
+    initialData: USE_MOCKED__CURRENCIES ? MOCKED_CURRENCIES_LIST : undefined,
     queryFn: () =>
       axios
         .get(`${BASE_API_URL}/currencies`, AXIOS_BASE_CONFIG)

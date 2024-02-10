@@ -103,10 +103,8 @@ const ConfigPayment = () => {
     context: UseMutationResult["context"]
   ) => {
     setPayment({
-      amount: variables.expected_output_amount,
-      description: variables.notes,
-      coin: variables.input_currency,
-      image: selectedCoin.image
+      image: selectedCoin.image,
+      identifier: ((data as any).data as CreateOrderResponse).identifier
     })
 
     router.push("/make_payment")

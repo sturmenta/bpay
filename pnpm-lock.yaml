@@ -20,6 +20,9 @@ dependencies:
   axios:
     specifier: ^1.6.7
     version: 1.6.7
+  dayjs:
+    specifier: ^1.11.10
+    version: 1.11.10
   expo:
     specifier: ~50.0.5
     version: 50.0.5(@babel/core@7.23.9)(@react-native/babel-preset@0.73.20)

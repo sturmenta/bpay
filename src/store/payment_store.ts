@@ -2,19 +2,22 @@ import { create } from "zustand"
 import { useShallow } from "zustand/react/shallow"
 
 export interface Payment_Interface {
-  amount: number
-  description: string
-  coin: Currency["symbol"]
   image: Currency["image"]
+  identifier: string
+}
+
+const defaultData: Payment_Interface = {
+  image: "",
+  identifier: ""
 }
 
 interface State {
-  payment: Payment_Interface | null
+  payment: Payment_Interface
   setPayment: (value: Payment_Interface) => void
 }
 
 const _usePaymentStore = create<State>((set) => ({
-  payment: null,
+  payment: defaultData,
   setPayment: (value) => set({ payment: value })
 }))
 

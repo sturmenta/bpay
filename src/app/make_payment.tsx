@@ -16,25 +16,17 @@ import Toast from "react-native-toast-message"
 import { image_metamask } from "@/assets/images"
 import { C_Card, Footer, OrderSummary } from "@/components/for_this_app"
 import {
-  FullScreenText,
   Screen
   // C_Button,
 } from "@/components/generic"
 import { colors } from "@/constants"
-import {
-  // usePaymentOutcomeStore,
-  usePaymentStore
-} from "@/store"
 
 const MakePayment = () => {
   // const router = useRouter()
-  const { payment } = usePaymentStore()
   // const { setPaymentOutcome } = usePaymentOutcomeStore()
 
   const [orderSummaryViewedOnce, setOrderSummaryViewedOnce] = useState(false)
   const [showQrTab, setShowQrTab] = useState(true)
-
-  if (!payment) return <FullScreenText text="ERROR: No payment data" />
 
   const copyToClipboard = async (text: string) => {
     await Clipboard.setStringAsync(text)
@@ -58,7 +50,7 @@ const MakePayment = () => {
     <Screen>
       <ScrollView>
         <OrderSummary
-          {...{ orderSummaryViewedOnce, setOrderSummaryViewedOnce, payment }}
+          {...{ orderSummaryViewedOnce, setOrderSummaryViewedOnce }}
         />
         {orderSummaryViewedOnce && (
           <>

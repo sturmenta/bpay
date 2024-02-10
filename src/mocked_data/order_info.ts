@@ -1,0 +1,33 @@
+export const MOCKED_ORDER_INFO = [
+  {
+    identifier: "a40c0ed0-f0c6-49d3-9520-d8de66eef8c1",
+    reference: null,
+    created_at: "2024-02-09T03:11:42.126725+01:00",
+    edited_at: "2024-02-09T03:11:48.598100+01:00",
+    status: "EX",
+    fiat_amount: 42.0,
+    crypto_amount: 0.0010268,
+    unconfirmed_amount: 0.0,
+    confirmed_amount: 0.0,
+    currency_id: "BTC_TEST",
+    merchant_device_id: 1,
+    merchant_device: "Bitnovo Test",
+    address: "tb1qzaxqkhejv9htarpa52an30h3xrhupw5kuq5eev",
+    tag_memo: "",
+    url_ko: null,
+    url_ok: null,
+    url_standby: null,
+    expired_time: "2024-02-09T03:26:48.595837+01:00",
+    good_fee: false,
+    notes: "Hellooo",
+    rbf: false,
+    safe: false,
+    fiat: "EUR",
+    language: "es",
+    percentage: 0.0,
+    received_amount: 0.0,
+    balance_based: "False",
+    internal_data: null,
+    transactions: []
+  }
+]
