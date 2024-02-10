@@ -1,7 +1,8 @@
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import * as Clipboard from "expo-clipboard"
-// import { useRouter } from "expo-router"
 import { CopyIcon, TimerIcon } from "lucide-react-native"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import {
   Image,
   Text,
@@ -15,18 +16,34 @@ import Toast from "react-native-toast-message"
 
 import { image_metamask } from "@/assets/images"
 import { C_Card, Footer, OrderSummary } from "@/components/for_this_app"
-import {
-  Screen
-  // C_Button,
-} from "@/components/generic"
-import { colors } from "@/constants"
+import { FullScreenLoading, Screen } from "@/components/generic"
+import { AXIOS_BASE_CONFIG, USE_MOCKED__ORDER_INFO } from "@/config"
+import { BASE_API_URL, colors } from "@/constants"
+import { MOCKED_CURRENCY_IMAGE_URL, MOCKED_ORDER_INFO } from "@/mocked_data"
+import { usePaymentStore } from "@/store"
 
 const MakePayment = () => {
-  // const router = useRouter()
-  // const { setPaymentOutcome } = usePaymentOutcomeStore()
+  const { payment } = usePaymentStore()
+
+  const { isPending, isError, data, error } = useQuery({
+    enabled: !USE_MOCKED__ORDER_INFO, // NOTE: use mocked data to not get 429 for server overload
+    queryKey: ["getOrderInfo"],
+    initialData: USE_MOCKED__ORDER_INFO ? MOCKED_ORDER_INFO : undefined,
+    queryFn: () =>
+      axios
+        .get(
+          `${BASE_API_URL}/orders/info/${payment.identifier}`,
+          AXIOS_BASE_CONFIG
+        )
+        .then((res) => res.data)
+  })
+
+  // ─────────────────────────────────────────────────────────────────────
 
   const [orderSummaryViewedOnce, setOrderSummaryViewedOnce] = useState(false)
   const [showQrTab, setShowQrTab] = useState(true)
+
+  // ─────────────────────────────────────────────────────────────────────
 
   const copyToClipboard = async (text: string) => {
     await Clipboard.setStringAsync(text)
@@ -36,21 +53,48 @@ const MakePayment = () => {
     })
   }
 
-  // const onSuccess = () => {
-  //   setPaymentOutcome({ success: true })
-  //   router.push("/payment_outcome")
-  // }
+  const getOrderInfo = useCallback(
+    () => ({
+      fiat_amount: data[0]?.fiat_amount,
+      fiat: data[0]?.fiat,
+      currency_id: data[0]?.currency_id,
+      merchant_device: data[0]?.merchant_device,
+      created_at: data[0]?.created_at,
+      notes: data[0]?.notes,
+      currency_image_url: USE_MOCKED__ORDER_INFO
+        ? MOCKED_CURRENCY_IMAGE_URL
+        : payment.image
+    }),
+    [data, payment.image]
+  )
 
-  // const onError = () => {
-  //   setPaymentOutcome({ success: false })
-  //   router.push("/payment_outcome")
-  // }
+  // ─────────────────────────────────────────────────────────────────────
+
+  if (isPending)
+    return (
+      <View className="p-10">
+        <FullScreenLoading />
+      </View>
+    )
+  if (isError)
+    return (
+      <View className="p-10">
+        <Text>{`ERROR: an error occurred while trying to get the order info\n\n${error.message}`}</Text>
+      </View>
+    )
+  if (!data || data.length === 0)
+    return (
+      <View className="p-10">
+        <Text>ERROR: No order info found</Text>
+      </View>
+    )
 
   return (
     <Screen>
       <ScrollView>
         <OrderSummary
           {...{ orderSummaryViewedOnce, setOrderSummaryViewedOnce }}
+          orderInfo={getOrderInfo()}
         />
         {orderSummaryViewedOnce && (
           <>
@@ -135,15 +179,6 @@ const MakePayment = () => {
             </C_Card>
           </>
         )}
-        {/*  */}
-        {/* <View className="p-10">
-          <C_Button
-            title="Go to payment outcome - success"
-            onPress={onSuccess}
-          />
-          <View className="h-5" />
-          <C_Button title="Go to payment outcome - error" onPress={onError} />
-        </View> */}
       </ScrollView>
       {/*  */}
       <Footer noFlex1 />
