@@ -9,6 +9,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { FullScreenLoading } from "@/components/generic"
 import { Root_Toast, toastConfig } from "@/config"
 
+// initialize dayjs plugins
+import "@/config/dayjs"
+
 // Catch any errors thrown by the Layout component.
 export { ErrorBoundary } from "expo-router"
 

@@ -13,13 +13,13 @@ import {
 
 export const toastConfig = {
   success: (props: BaseToastProps) => (
-    <SuccessToast text2Style={{ color: "#ccc", fontSize: 12 }} {...props} />
+    <SuccessToast {...props} text2Style={{ color: "#222", fontSize: 12 }} />
   ),
   error: (props: BaseToastProps) => (
     <ErrorToast
+      {...props}
       text1Style={{ fontSize: 13 }}
       text2Style={{ fontSize: 13, marginTop: 2 }}
-      {...props}
     />
   )
 }
