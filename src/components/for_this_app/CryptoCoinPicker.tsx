@@ -1,5 +1,5 @@
-// import { useQuery } from "@tanstack/react-query"
-// import axios from "axios"
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import _ from "lodash"
 import {
   CheckIcon,
@@ -22,14 +22,9 @@ import {
   PickerValue
 } from "react-native-ui-lib/src/components/picker/types"
 
-// import { AXIOS_BASE_CONFIG } from "@/config"
-import {
-  colors,
-  // BASE_API_URL,
-  MOCKED_CURRENCIES_LIST
-} from "@/constants"
-
-// import { useFocusNotifyOnChangeProps } from "@/hooks"
+import { AXIOS_BASE_CONFIG, USE_MOCKED_CURRENCIES } from "@/config"
+import { BASE_API_URL, colors } from "@/constants"
+import { MOCKED_CURRENCIES_LIST } from "@/mocked_data"
 
 import { FullScreenLoading } from "../generic"
 
@@ -57,22 +52,19 @@ export const CryptoCoinPicker = ({
   paymentAmount?: number
   disabled?: boolean
 }) => {
+  const { isPending, isError, data, error } = useQuery({
+    enabled: !USE_MOCKED_CURRENCIES, // NOTE: use mocked data to not get 429 for server overload
+    queryKey: ["getCurrencies"],
+    initialData: USE_MOCKED_CURRENCIES ? MOCKED_CURRENCIES_LIST : undefined,
+    queryFn: () =>
+      axios
+        .get(`${BASE_API_URL}/currencies`, AXIOS_BASE_CONFIG)
+        .then((res) => res.data)
+  })
+
+  // ─────────────────────────────────────────────────────────────────────
+
   const [pickerOptions, setPickerOptions] = useState<PickerOption[]>([])
-  // const notifyOnChangeProps = useFocusNotifyOnChangeProps()
-
-  // const { isLoading, error, data, isFetching } = useQuery({
-  //   queryKey: ["getCurrencies"],
-  //   queryFn: () =>
-  //     axios
-  //       .get(`${BASE_API_URL}/currencies`, AXIOS_BASE_CONFIG)
-  //       .then((res) => res.data),
-  //   notifyOnChangeProps
-  // })
-
-  const isLoading = false
-  const error = { message: "" }
-  const data = MOCKED_CURRENCIES_LIST // TODO: use mocked data to not make the request and not get 429 for server overload
-  const isFetching = false
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -183,22 +175,22 @@ export const CryptoCoinPicker = ({
       )
     }
 
-  if (isLoading || isFetching)
+  if (isPending)
     return (
       <View className="p-10">
         <FullScreenLoading />
       </View>
     )
-  if (data.length === 0)
-    return (
-      <View className="p-10">
-        <Text>ERROR: No currencies found</Text>
-      </View>
-    )
-  if (error && error.message)
+  if (isError)
     return (
       <View className="p-10">
         <Text>{`ERROR: an error occurred while trying to get the currencies\n\n${error.message}`}</Text>
+      </View>
+    )
+  if (!data || data.length === 0)
+    return (
+      <View className="p-10">
+        <Text>ERROR: No currencies found</Text>
       </View>
     )
 

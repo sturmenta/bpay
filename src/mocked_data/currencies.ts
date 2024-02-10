@@ -1,5 +1,3 @@
-// TODO: delete this file after finish testing
-
 export const MOCKED_CURRENCIES_LIST = [
   {
     symbol: "BCH_TEST",
@@ -8,7 +6,7 @@ export const MOCKED_CURRENCIES_LIST = [
     max_amount: "20000.00",
     image:
       "https://payments.pre-bnvo.com/media/crytocurrencies/CryptoBCH_Size36_px_TT7Td9Q.png",
-    blockchain: "BCH_TEST"
+    blockchain: "BCH_TESTT"
   },
   {
     symbol: "BTC_TEST",
