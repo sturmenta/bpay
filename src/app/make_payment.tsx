@@ -1,5 +1,5 @@
 import * as Clipboard from "expo-clipboard"
-import { useRouter } from "expo-router"
+// import { useRouter } from "expo-router"
 import { CopyIcon, TimerIcon } from "lucide-react-native"
 import { useState } from "react"
 import {
@@ -15,14 +15,21 @@ import Toast from "react-native-toast-message"
 
 import { image_metamask } from "@/assets/images"
 import { C_Card, Footer, OrderSummary } from "@/components/for_this_app"
-import { C_Button, FullScreenText, Screen } from "@/components/generic"
+import {
+  FullScreenText,
+  Screen
+  // C_Button,
+} from "@/components/generic"
 import { colors } from "@/constants"
-import { usePaymentOutcomeStore, usePaymentStore } from "@/store"
+import {
+  // usePaymentOutcomeStore,
+  usePaymentStore
+} from "@/store"
 
 const MakePayment = () => {
-  const router = useRouter()
+  // const router = useRouter()
   const { payment } = usePaymentStore()
-  const { setPaymentOutcome } = usePaymentOutcomeStore()
+  // const { setPaymentOutcome } = usePaymentOutcomeStore()
 
   const [orderSummaryViewedOnce, setOrderSummaryViewedOnce] = useState(false)
   const [showQrTab, setShowQrTab] = useState(true)
@@ -33,20 +40,19 @@ const MakePayment = () => {
     await Clipboard.setStringAsync(text)
     Toast.show({
       type: "success",
-      text2: "El texto fue copiado al portapapeles! ✅",
-      text2Style: { color: "#222", fontSize: 12 }
+      text2: "El texto fue copiado al portapapeles! ✅"
     })
   }
 
-  const onSuccess = () => {
-    setPaymentOutcome({ success: true })
-    router.push("/payment_outcome")
-  }
+  // const onSuccess = () => {
+  //   setPaymentOutcome({ success: true })
+  //   router.push("/payment_outcome")
+  // }
 
-  const onError = () => {
-    setPaymentOutcome({ success: false })
-    router.push("/payment_outcome")
-  }
+  // const onError = () => {
+  //   setPaymentOutcome({ success: false })
+  //   router.push("/payment_outcome")
+  // }
 
   return (
     <Screen>

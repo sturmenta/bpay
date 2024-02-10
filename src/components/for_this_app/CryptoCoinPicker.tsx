@@ -49,11 +49,13 @@ export type SelectedCurrency_Type = {
 export const CryptoCoinPicker = ({
   selectedCoin,
   setSelectedCoin,
-  paymentAmount
+  paymentAmount,
+  disabled
 }: {
   selectedCoin: SelectedCurrency_Type
   setSelectedCoin: React.Dispatch<React.SetStateAction<SelectedCurrency_Type>>
   paymentAmount?: number
+  disabled?: boolean
 }) => {
   const [pickerOptions, setPickerOptions] = useState<PickerOption[]>([])
   // const notifyOnChangeProps = useFocusNotifyOnChangeProps()
@@ -101,9 +103,7 @@ export const CryptoCoinPicker = ({
     Toast.show({
       type: "error",
       text1: "No hay opciones disponibles ❌",
-      text1Style: { fontSize: 13 },
-      text2: "Prueba cambiando el importe ingresado",
-      text2Style: { fontSize: 13, marginTop: 2 }
+      text2: "Prueba cambiando el importe ingresado"
     })
 
   const renderPicker: PickerProps["renderPicker"] = (
@@ -206,32 +206,36 @@ export const CryptoCoinPicker = ({
   if (pickerOptions.length === 0) return renderPicker(undefined, "")
 
   return (
-    <Picker
-      placeholder="Seleccionar criptomoneda"
-      floatingPlaceholder
-      value={selectedCoin.value}
-      enableModalBlur={false}
-      onChange={(item) => {
-        setSelectedCoin({
-          value: item!.toString(),
-          image: getCurrencyImage(data, item!.toString())
-        })
-      }}
-      topBarProps={{ title: "Seleccionar criptomoneda" }}
-      showSearch
-      useSafeArea
-      searchPlaceholder="Buscar"
-      searchStyle={{ color: "#333", placeholderTextColor: "#ccc" }}
-      renderPicker={renderPicker}>
-      {_.map(pickerOptions, (option, index) => (
-        <Picker.Item
-          key={option.value}
-          value={option.value}
-          label={option.label}
-          renderItem={renderItem(option, index)}
-        />
-      ))}
-    </Picker>
+    <View
+      pointerEvents={disabled ? "none" : "auto"}
+      className={`${disabled ? "opacity-60" : ""}`}>
+      <Picker
+        placeholder="Seleccionar criptomoneda"
+        floatingPlaceholder
+        value={selectedCoin.value}
+        enableModalBlur={false}
+        onChange={(item) => {
+          setSelectedCoin({
+            value: item!.toString(),
+            image: getCurrencyImage(data, item!.toString())
+          })
+        }}
+        topBarProps={{ title: "Seleccionar criptomoneda" }}
+        showSearch
+        useSafeArea
+        searchPlaceholder="Buscar"
+        searchStyle={{ color: "#333", placeholderTextColor: "#ccc" }}
+        renderPicker={renderPicker}>
+        {_.map(pickerOptions, (option, index) => (
+          <Picker.Item
+            key={option.value}
+            value={option.value}
+            label={option.label}
+            renderItem={renderItem(option, index)}
+          />
+        ))}
+      </Picker>
+    </View>
   )
 }
 

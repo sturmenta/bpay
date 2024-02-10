@@ -1,3 +1,5 @@
+import { useMutation, UseMutationResult } from "@tanstack/react-query"
+import axios from "axios"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -11,15 +13,28 @@ import {
   SelectedCurrency_Type
 } from "@/components/for_this_app"
 import { C_Button, C_TextInput, Screen } from "@/components/generic"
+import { AXIOS_BASE_CONFIG } from "@/config"
+import { BASE_API_URL } from "@/constants"
 import { usePaymentStore } from "@/store"
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 type Inputs = {
   payment_amount: string
   description: string
 }
 
+// https://payments.pre-bnvo.com/redoc/#operation/orders_create
+type Payment = {
+  expected_output_amount: number // (required) Payment amount in fiat (€).
+  input_currency: string // The cryptocurrency that will be use to make the payment.
+  notes: string // (<= 512 characters) Product or service description of the payment.
+}
+
 // to not show "no options" when start and have better user experience
 const PAYMENT_AMOUNT__START_VALUE = 0.5
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const ConfigPayment = () => {
   const { setPayment } = usePaymentStore()
@@ -29,6 +44,13 @@ const ConfigPayment = () => {
       payment_amount: PAYMENT_AMOUNT__START_VALUE.toString().replace(".", ","),
       description: ""
     }
+  })
+  const { isPending, mutate } = useMutation({
+    mutationFn: (payment: Payment) =>
+      axios.post(`${BASE_API_URL}/orders/`, payment, AXIOS_BASE_CONFIG),
+    onSuccess: (data, variables, context) =>
+      onSuccess(data, variables, context),
+    onError: (error, variables, context) => onError(error, variables, context)
   })
 
   // ─────────────────────────────────────────────────────────────────────
@@ -46,7 +68,7 @@ const ConfigPayment = () => {
 
   useEffect(() => {
     const subscription = watch((value) => {
-      // check if the fields are filled to enable the button
+      // check if all the fields are filled to enable the button
       setCtaButtonEnabled(Boolean(value.description && value.payment_amount))
 
       // only one comma is allowed
@@ -54,15 +76,11 @@ const ConfigPayment = () => {
         Toast.show({
           type: "error",
           text1: "Error ❌",
-          text1Style: { fontSize: 13 },
-          text2: "El importe debe ser un número válido",
-          text2Style: { fontSize: 13, marginTop: 2 }
+          text2: "El importe debe ser un número válido"
         })
         setCtaButtonEnabled(false)
       } else {
-        setPaymentAmount(
-          parseFloat(value.payment_amount?.replace(",", ".") || "0")
-        )
+        setPaymentAmount(parsePaymentAmount(value.payment_amount))
       }
     })
 
@@ -72,14 +90,40 @@ const ConfigPayment = () => {
   // ─────────────────────────────────────────────────────────────────────
 
   const onSubmit = (data: { payment_amount: string; description: string }) => {
+    mutate({
+      expected_output_amount: parsePaymentAmount(data.payment_amount),
+      input_currency: selectedCoin.value,
+      notes: data.description
+    })
+  }
+
+  const onSuccess = (
+    data: UseMutationResult["data"],
+    variables: Payment,
+    context: UseMutationResult["context"]
+  ) => {
     setPayment({
-      amount: parseFloat(data.payment_amount),
-      description: data.description,
-      coin: selectedCoin.value,
+      amount: variables.expected_output_amount,
+      description: variables.notes,
+      coin: variables.input_currency,
       image: selectedCoin.image
     })
 
     router.push("/make_payment")
+  }
+
+  const onError = (
+    error: UseMutationResult["error"],
+    variables: Payment,
+    context: UseMutationResult["context"]
+  ) => {
+    if (!error) return
+
+    Toast.show({
+      type: "error",
+      text1: "Error ❌",
+      text2: "No se ha podido crear el pago"
+    })
   }
 
   // ─────────────────────────────────────────────────────────────────────
@@ -94,6 +138,7 @@ const ConfigPayment = () => {
             rules={{ required: true }}
             render={({ field: { onChange, onBlur, value } }) => (
               <C_TextInput
+                disabled={isPending}
                 title="Importe a pagar"
                 placeholder="Añade importe a pagar"
                 onBlur={onBlur}
@@ -111,7 +156,8 @@ const ConfigPayment = () => {
             {...{
               selectedCoin,
               setSelectedCoin,
-              paymentAmount
+              paymentAmount,
+              disabled: isPending
             }}
           />
 
@@ -119,9 +165,10 @@ const ConfigPayment = () => {
 
           <Controller
             control={control}
-            rules={{ maxLength: 100, required: true }}
+            rules={{ maxLength: 512, required: true }}
             render={({ field: { onChange, onBlur, value } }) => (
               <C_TextInput
+                disabled={isPending}
                 title="Concepto"
                 placeholder="Añade descripción del pago"
                 onBlur={onBlur}
@@ -137,6 +184,7 @@ const ConfigPayment = () => {
           <C_Button
             title="Continuar"
             disabled={!(ctaButtonEnabled && selectedCoin.value)}
+            isLoading={isPending}
             onPress={handleSubmit(onSubmit)}
           />
         </View>
@@ -148,3 +196,8 @@ const ConfigPayment = () => {
 }
 
 export default ConfigPayment
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+const parsePaymentAmount = (value?: string) =>
+  parseFloat(value?.replace(",", ".") || "0")

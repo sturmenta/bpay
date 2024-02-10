@@ -12,8 +12,16 @@ import {
 } from "@/utils/generic"
 
 export const toastConfig = {
-  success: (props: BaseToastProps) => <SuccessToast {...props} />,
-  error: (props: BaseToastProps) => <ErrorToast {...props} />
+  success: (props: BaseToastProps) => (
+    <SuccessToast text2Style={{ color: "#ccc", fontSize: 12 }} {...props} />
+  ),
+  error: (props: BaseToastProps) => (
+    <ErrorToast
+      text1Style={{ fontSize: 13 }}
+      text2Style={{ fontSize: 13, marginTop: 2 }}
+      {...props}
+    />
+  )
 }
 
 export const Root_Toast = (props: ToastProps) => {
