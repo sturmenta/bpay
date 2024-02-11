@@ -1,12 +1,12 @@
 import { create } from "zustand"
 import { useShallow } from "zustand/react/shallow"
 
-export interface PaymentOutcome_Interface {
+export type PaymentOutcome_Interface = {
   success: boolean
-}
+} | null
 
 interface State {
-  paymentOutcome: PaymentOutcome_Interface | null
+  paymentOutcome: PaymentOutcome_Interface
   setPaymentOutcome: (value: PaymentOutcome_Interface) => void
 }
 

@@ -15,19 +15,13 @@ import { C_Card } from "./C_Card"
 export const OrderSummary = ({
   orderSummaryViewedOnce,
   setOrderSummaryViewedOnce,
-  orderInfo
+  orderInfo,
+  currencyImageUrl
 }: {
   orderSummaryViewedOnce: boolean
   setOrderSummaryViewedOnce: Dispatch<SetStateAction<boolean>>
-  orderInfo: {
-    fiat_amount: number
-    fiat: string
-    currency_id: string
-    merchant_device: string
-    created_at: string
-    notes: string
-    currency_image_url: string
-  }
+  orderInfo: OrderInfo
+  currencyImageUrl: string
 }) => {
   const [orderSummaryCollapsed, setOrderSummaryCollapsed] = useState(false)
 
@@ -57,7 +51,7 @@ export const OrderSummary = ({
         <Row>
           <Text className="flex-1 font-medium">Moneda seleccionada:</Text>
           <Image
-            source={{ uri: orderInfo.currency_image_url }}
+            source={{ uri: currencyImageUrl }}
             height={20}
             width={20}
             className="mr-2"

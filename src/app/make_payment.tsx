@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import * as Clipboard from "expo-clipboard"
+import { useRouter } from "expo-router"
 import { CopyIcon, TimerIcon } from "lucide-react-native"
-import { useCallback, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Image,
   Text,
@@ -15,21 +16,38 @@ import QRCode from "react-native-qrcode-svg"
 import Toast from "react-native-toast-message"
 
 import { image_metamask } from "@/assets/images"
-import { C_Card, Footer, OrderSummary } from "@/components/for_this_app"
-import { FullScreenLoading, RemainingTime, Screen } from "@/components/generic"
+import {
+  C_Card,
+  Footer,
+  ListenPaymentStatus,
+  OrderSummary
+} from "@/components/for_this_app"
+import {
+  FullScreenLoading,
+  FullScreenText,
+  RemainingTime,
+  Screen
+} from "@/components/generic"
 import { AXIOS_BASE_CONFIG, USE_MOCKED__ORDER_INFO } from "@/config"
 import { BASE_API_URL, colors } from "@/constants"
 import { MOCKED_CURRENCY_IMAGE_URL, MOCKED_ORDER_INFO } from "@/mocked_data"
-import { usePaymentStore } from "@/store"
+import { usePaymentOutcomeStore, usePaymentStore } from "@/store"
 
 const MakePayment = () => {
+  const router = useRouter()
   const { payment } = usePaymentStore()
+  const { paymentOutcome } = usePaymentOutcomeStore()
 
   const {
     isPending,
     isError,
     data: orderInfo,
     error
+  }: {
+    data: OrderInfo
+    isPending: boolean
+    isError: boolean
+    error: Error | null
   } = useQuery({
     enabled: !USE_MOCKED__ORDER_INFO, // NOTE: use mocked data to not get 429 for server overload
     queryKey: ["getOrderInfo"],
@@ -40,13 +58,19 @@ const MakePayment = () => {
           `${BASE_API_URL}/orders/info/${payment.identifier}`,
           AXIOS_BASE_CONFIG
         )
-        .then((res) => res.data[0])
+        .then((res) => res.data[0]) // NOTE: get the first order of the array
   })
 
   // ─────────────────────────────────────────────────────────────────────
 
   const [orderSummaryViewedOnce, setOrderSummaryViewedOnce] = useState(false)
   const [showQrTab, setShowQrTab] = useState(true)
+
+  // ─────────────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (paymentOutcome) router.push("/payment_outcome")
+  }, [paymentOutcome])
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -58,48 +82,40 @@ const MakePayment = () => {
     })
   }
 
-  const getOrderInfo = useCallback(
-    () => ({
-      fiat_amount: orderInfo?.fiat_amount,
-      fiat: orderInfo?.fiat,
-      currency_id: orderInfo?.currency_id,
-      merchant_device: orderInfo?.merchant_device,
-      created_at: orderInfo?.created_at,
-      notes: orderInfo?.notes,
-      currency_image_url: USE_MOCKED__ORDER_INFO
-        ? MOCKED_CURRENCY_IMAGE_URL
-        : payment.image
-    }),
-    [orderInfo, payment.image]
-  )
+  const hasOrderInfoRequiredValues = () => {
+    if (!orderInfo) return false
+    if (!orderInfo.crypto_amount) return false
+    if (!orderInfo.expired_time) return false
+    if (!orderInfo.address) return false
+    return true
+  }
 
   // ─────────────────────────────────────────────────────────────────────
 
-  if (isPending)
-    return (
-      <View className="p-10">
-        <FullScreenLoading />
-      </View>
-    )
+  if (isPending) return <FullScreenLoading />
   if (isError)
     return (
-      <View className="p-10">
-        <Text>{`ERROR: an error occurred while trying to get the order info\n\n${error.message}`}</Text>
-      </View>
+      <FullScreenText
+        text={`ERROR: an error occurred while trying to get the order info\n\n${error?.message}`}
+      />
     )
-  if (!orderInfo)
-    return (
-      <View className="p-10">
-        <Text>ERROR: No order info found</Text>
-      </View>
-    )
+  if (!orderInfo) return <FullScreenText text="ERROR: No order info found" />
+  if (!hasOrderInfoRequiredValues())
+    return <FullScreenText text="ERROR: No orderInfo required values found" />
 
   return (
     <Screen>
+      <ListenPaymentStatus
+        paymentIdentifier={payment.identifier}
+        paymentExpiredTime={orderInfo.expired_time!}
+      />
       <ScrollView>
         <OrderSummary
           {...{ orderSummaryViewedOnce, setOrderSummaryViewedOnce }}
-          orderInfo={getOrderInfo()}
+          orderInfo={orderInfo}
+          currencyImageUrl={
+            USE_MOCKED__ORDER_INFO ? MOCKED_CURRENCY_IMAGE_URL : payment.image
+          }
         />
         {orderSummaryViewedOnce && (
           <>
@@ -116,7 +132,7 @@ const MakePayment = () => {
                 <View className="flex-row items-center space-x-1">
                   <TimerIcon size={20} color="#333" />
                   <Text className="mt-0.5 text-xs">
-                    <RemainingTime expired_time={orderInfo.expired_time} />
+                    <RemainingTime expired_time={orderInfo.expired_time!} />
                   </Text>
                 </View>
 
@@ -137,7 +153,7 @@ const MakePayment = () => {
                   {showQrTab ? (
                     <View className="my-5 h-40 w-40 items-center justify-center p-5">
                       <C_Card>
-                        <QRCode value={orderInfo.address} />
+                        <QRCode value={orderInfo.address!} />
                       </C_Card>
                     </View>
                   ) : (
@@ -155,9 +171,7 @@ const MakePayment = () => {
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
-                        copyToClipboard(
-                          orderInfo.crypto_amount + " " + orderInfo.currency_id
-                        )
+                        copyToClipboard(orderInfo.crypto_amount!.toString())
                       }>
                       <CopyIcon size={15} />
                     </TouchableOpacity>
@@ -167,7 +181,7 @@ const MakePayment = () => {
                       {orderInfo.address}
                     </Text>
                     <TouchableOpacity
-                      onPress={() => copyToClipboard(orderInfo.address)}>
+                      onPress={() => copyToClipboard(orderInfo.address!)}>
                       <CopyIcon size={15} />
                     </TouchableOpacity>
                   </View>
@@ -180,7 +194,7 @@ const MakePayment = () => {
                         Etiqueta de destino: {orderInfo.tag_memo}
                       </Text>
                       <TouchableOpacity
-                        onPress={() => copyToClipboard(orderInfo.tag_memo)}>
+                        onPress={() => copyToClipboard(orderInfo.tag_memo!)}>
                         <CopyIcon size={15} />
                       </TouchableOpacity>
                     </View>

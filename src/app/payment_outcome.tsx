@@ -9,7 +9,7 @@ import { usePaymentOutcomeStore } from "@/store"
 
 const PaymentOutcome = () => {
   const router = useRouter()
-  const { paymentOutcome } = usePaymentOutcomeStore()
+  const { paymentOutcome, setPaymentOutcome } = usePaymentOutcomeStore()
 
   return (
     <Screen>
@@ -31,7 +31,10 @@ const PaymentOutcome = () => {
             </View>
             <C_Button
               title="Crear nuevo pago"
-              onPress={() => router.replace("/config_payment")}
+              onPress={() => {
+                router.replace("/config_payment")
+                setPaymentOutcome(null) // reset to initial state
+              }}
               style={{ backgroundColor: colors.bitnovo, width: "100%" }}
             />
           </View>
