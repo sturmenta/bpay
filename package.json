@@ -1,18 +1,19 @@
 {
   "name": "bpay",
   "main": "expo-router/entry",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "scripts": {
     "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
     "android:dev": "expo run:android",
     "ios:dev": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build": "eas build --platform ios",
     "build:dev": "eas build --platform ios --profile development",
-    "submit": "eas submit --platform ios"
+    "submit": "eas submit --platform ios",
+    "dev-client": "npx expo start --dev-client"
   },
   "jest": {
     "preset": "jest-expo"

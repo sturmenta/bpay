@@ -3,7 +3,7 @@ import axios from "axios"
 import * as Clipboard from "expo-clipboard"
 import { useRouter } from "expo-router"
 import { CopyIcon, TimerIcon } from "lucide-react-native"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
   Image,
   Text,
@@ -94,12 +94,38 @@ const MakePayment = () => {
     return true
   }
 
-  const onPressMetamask = async () => {
+  const onPressMetamask = useCallback(async () => {
     await MetamaskSdk.connect()
     const ethereum = MetamaskSdk.getProvider()
-    const accounts = await ethereum.request({ method: "eth_requestAccounts" })
-    console.log(accounts)
-  }
+
+    const accounts = await ethereum
+      .request({ method: "eth_requestAccounts" })
+      .catch((err) => {
+        if (err.code === 4001) {
+          // EIP-1193 userRejectedRequest error
+          // If this happens, the user rejected the connection request.
+          console.log("Please connect to MetaMask.")
+        } else {
+          console.error(err)
+        }
+      })
+
+    const account = (accounts as any)[0]
+
+    await ethereum.request({
+      method: "eth_sendTransaction",
+      params: [
+        {
+          from: account, // The user's active address.
+          to: orderInfo.address, // Required except during contract publications.
+          value: Number(orderInfo.crypto_amount! * 1e18).toString(16), // Only required to send ether to the recipient from the initiating external account.
+          gasLimit: "0x5028", // Customizable by the user during MetaMask confirmation.
+          maxPriorityFeePerGas: "0x3b9aca00", // Customizable by the user during MetaMask confirmation.
+          maxFeePerGas: "0x2540be400" // Customizable by the user during MetaMask confirmation.
+        }
+      ]
+    })
+  }, [orderInfo])
 
   // ─────────────────────────────────────────────────────────────────────
 
