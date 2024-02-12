@@ -10,6 +10,18 @@ bitnovo technical test
 
 ---
 
+## Videos final app
+
+- [Creating a payment and success](https://drive.google.com/file/d/1b9EqE3wwAXfNQR4GjJ1sI5YYObN01l3s/view?usp=sharing)
+
+- [Expired payment](https://drive.google.com/file/d/1N-p8RG_4XL5SXgUa1eSVQtp72ypgAZSJ/view?usp=sharing)
+
+- [Min max currency picker validations](https://drive.google.com/file/d/1lV1O27X0Zcznj_wKAc27u-P71h4GcgA7/view?usp=sharing)
+
+- [Request payment to metamask app](https://drive.google.com/file/d/1OSWmRZz0T2K1t6Tz4UV6SXIu5J0jSeV5/view?usp=sharing)
+
+---
+
 ## Requirements
 
 > Si bien la consigna fue inicialmente concebida para ReactJS (web), simplemente hacer uso de React Native en lugar de ReactJS.
