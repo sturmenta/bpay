@@ -2,7 +2,7 @@
   "expo": {
     "name": "bpay",
     "slug": "bpay",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./src/assets/app_images/icon.png",
     "scheme": "myapp",
