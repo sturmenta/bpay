@@ -4,15 +4,17 @@
   "version": "1.0.3",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "android:dev": "expo run:android",
     "ios:dev": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "build": "eas build --platform ios",
-    "build:dev": "eas build --platform ios --profile development",
-    "submit": "eas submit --platform ios",
+    "build:ios": "eas build -p ios",
+    "build:ios:dev": "eas build -p ios --profile development",
+    "build:android:dev": "eas build -p android --profile development",
+    "build:android:apk": "eas build -p android --profile preview",
+    "submit": "eas submit -p ios",
     "dev-client": "npx expo start --dev-client"
   },
   "jest": {

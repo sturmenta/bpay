@@ -212,7 +212,7 @@ const MakePayment = () => {
                       onPress={() =>
                         copyToClipboard(orderInfo.crypto_amount!.toString())
                       }>
-                      <CopyIcon size={15} />
+                      <CopyIcon size={15} color="#2e65dd" />
                     </TouchableOpacity>
                   </View>
                   <View className="flex-row space-x-2">
@@ -221,7 +221,7 @@ const MakePayment = () => {
                     </Text>
                     <TouchableOpacity
                       onPress={() => copyToClipboard(orderInfo.address!)}>
-                      <CopyIcon size={15} />
+                      <CopyIcon size={15} color="#2e65dd" />
                     </TouchableOpacity>
                   </View>
                   {orderInfo.tag_memo && (
@@ -234,7 +234,7 @@ const MakePayment = () => {
                       </Text>
                       <TouchableOpacity
                         onPress={() => copyToClipboard(orderInfo.tag_memo!)}>
-                        <CopyIcon size={15} />
+                        <CopyIcon size={15} color="#2e65dd" />
                       </TouchableOpacity>
                     </View>
                   )}
