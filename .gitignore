@@ -7,6 +7,9 @@ node_modules/
 .expo/
 dist/
 web-build/
+# EAS Build will not sync your native configuration if the ios or android folders are present.
+ios/
+android/
 
 # Native
 *.orig.*
