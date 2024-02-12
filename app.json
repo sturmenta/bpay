@@ -1,12 +1,13 @@
 {
   "expo": {
+    "jsEngine": "hermes",
     "name": "bpay",
     "slug": "bpay",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./src/assets/app_images/icon.png",
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./src/assets/app_images/splash.png",
       "resizeMode": "contain",

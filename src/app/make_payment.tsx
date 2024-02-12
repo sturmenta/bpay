@@ -3,7 +3,7 @@ import axios from "axios"
 import * as Clipboard from "expo-clipboard"
 import { useRouter } from "expo-router"
 import { CopyIcon, TimerIcon } from "lucide-react-native"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
   Image,
   Text,
@@ -28,7 +28,11 @@ import {
   RemainingTime,
   Screen
 } from "@/components/generic"
-import { AXIOS_BASE_CONFIG, USE_MOCKED__ORDER_INFO } from "@/config"
+import {
+  AXIOS_BASE_CONFIG,
+  MetamaskSdk,
+  USE_MOCKED__ORDER_INFO
+} from "@/config"
 import { BASE_API_URL, colors } from "@/constants"
 import { MOCKED_CURRENCY_IMAGE_URL, MOCKED_ORDER_INFO } from "@/mocked_data"
 import { usePaymentOutcomeStore, usePaymentStore } from "@/store"
@@ -89,6 +93,39 @@ const MakePayment = () => {
     if (!orderInfo.address) return false
     return true
   }
+
+  const onPressMetamask = useCallback(async () => {
+    await MetamaskSdk.connect()
+    const ethereum = MetamaskSdk.getProvider()
+
+    const accounts = await ethereum
+      .request({ method: "eth_requestAccounts" })
+      .catch((err) => {
+        if (err.code === 4001) {
+          // EIP-1193 userRejectedRequest error
+          // If this happens, the user rejected the connection request.
+          console.log("Please connect to MetaMask.")
+        } else {
+          console.error(err)
+        }
+      })
+
+    const account = (accounts as any)[0]
+
+    await ethereum.request({
+      method: "eth_sendTransaction",
+      params: [
+        {
+          from: account, // The user's active address.
+          to: orderInfo.address, // Required except during contract publications.
+          value: Number(orderInfo.crypto_amount! * 1e18).toString(16), // Only required to send ether to the recipient from the initiating external account.
+          gasLimit: "0x5028", // Customizable by the user during MetaMask confirmation.
+          maxPriorityFeePerGas: "0x3b9aca00", // Customizable by the user during MetaMask confirmation.
+          maxFeePerGas: "0x2540be400" // Customizable by the user during MetaMask confirmation.
+        }
+      ]
+    })
+  }, [orderInfo])
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -157,12 +194,14 @@ const MakePayment = () => {
                       </C_Card>
                     </View>
                   ) : (
-                    <View className="my-5 h-40 w-40 items-center justify-center rounded-lg border border-gray-200 p-5">
+                    <TouchableOpacity
+                      onPress={onPressMetamask}
+                      className="my-5 h-40 w-40 items-center justify-center rounded-lg border border-gray-200 p-5">
                       <Image
                         source={image_metamask}
                         style={{ transform: [{ scale: 0.4 }] }}
                       />
-                    </View>
+                    </TouchableOpacity>
                   )}
                   <View className="flex-row space-x-1">
                     <Text>Enviar</Text>
