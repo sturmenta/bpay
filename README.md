@@ -10,6 +10,15 @@ bitnovo technical test
 
 ---
 
+## Images final app
+
+| ![1](https://github.com/sturmenta/bpay/assets/30802967/f97aef24-de04-40f6-8b63-621f917a928f) | ![1 5](https://github.com/sturmenta/bpay/assets/30802967/d6fbda3b-ecc3-434b-b789-e5c83b83da7e) | ![2](https://github.com/sturmenta/bpay/assets/30802967/f2a00809-7391-49f7-ad59-f835dcf2f5ec)                           |
+|----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| ![3](https://github.com/sturmenta/bpay/assets/30802967/739356f8-94b9-4ede-bf04-498abcaf4f4f) | ![4](https://github.com/sturmenta/bpay/assets/30802967/8ad42789-7f3b-44ef-ac05-5641c07627a3)   | ![5](https://github.com/sturmenta/bpay/assets/30802967/aaca5642-ac7c-48f4-a467-3cb6219ede98)                           |
+| ![6](https://github.com/sturmenta/bpay/assets/30802967/0df8a3b5-2a50-49c2-a689-046aa7db0d17) | ![7](https://github.com/sturmenta/bpay/assets/30802967/3e70b484-04de-4432-af31-caf1d6768743)   | <img width="407" alt="8" src="https://github.com/sturmenta/bpay/assets/30802967/162d7c75-1747-458b-8c61-03faf4510c7f"> |
+
+---
+
 ## Videos final app
 
 - [Creating a payment and success](https://drive.google.com/file/d/1b9EqE3wwAXfNQR4GjJ1sI5YYObN01l3s/view?usp=sharing)
