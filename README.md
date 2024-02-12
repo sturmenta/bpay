@@ -45,9 +45,3 @@ Hay que tener en cuenta que los pagos tienen un tiempo de expiración y que debe
 Opcional: Se valorará muy positivamente la opción de añadir mediante Web3 alguna wallet, como puede ser METAMASK.
 
 Para realizar pagos puede utilizar esta web de [XRP](https://test.xrptoolkit.com/connect-wallet) o la aplicación de test de [BTC](https://play.google.com/store/apps/details?id=de.schildbach.wallet_test&hl=en&gl=US). Si lo ve conveniente puede utilizar el endpoint `GET orders` para comprobar los pagos que ha creado.
-
----
-
-## TODO:
-
-- [ ] (before delivering the challenge) remove mocked data in CryptoCoinPicker and use real currencies from the API

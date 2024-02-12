@@ -1,4 +1,5 @@
 const { getDefaultConfig } = require("expo/metro-config")
+const nodeLibs = require("node-libs-react-native")
 
 module.exports = (() => {
   // eslint-disable-next-line no-undef
@@ -12,6 +13,10 @@ module.exports = (() => {
   }
   config.resolver = {
     ...resolver,
+    extraNodeModules: {
+      ...nodeLibs,
+      ...resolver.extraNodeModules
+    },
     assetExts: resolver.assetExts.filter((ext) => ext !== "svg"),
     sourceExts: [...resolver.sourceExts, "svg"]
   }

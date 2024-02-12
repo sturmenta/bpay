@@ -10,7 +10,9 @@ import { FullScreenLoading } from "@/components/generic"
 import { Root_Toast, toastConfig } from "@/config"
 
 // initialize dayjs plugins
-import "@/config/dayjs"
+import "@/config/dayjs_init"
+// initialize metamask required settings
+import "@/config/metamask_init"
 
 // Catch any errors thrown by the Layout component.
 export { ErrorBoundary } from "expo-router"

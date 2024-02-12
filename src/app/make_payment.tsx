@@ -28,7 +28,11 @@ import {
   RemainingTime,
   Screen
 } from "@/components/generic"
-import { AXIOS_BASE_CONFIG, USE_MOCKED__ORDER_INFO } from "@/config"
+import {
+  AXIOS_BASE_CONFIG,
+  MetamaskSdk,
+  USE_MOCKED__ORDER_INFO
+} from "@/config"
 import { BASE_API_URL, colors } from "@/constants"
 import { MOCKED_CURRENCY_IMAGE_URL, MOCKED_ORDER_INFO } from "@/mocked_data"
 import { usePaymentOutcomeStore, usePaymentStore } from "@/store"
@@ -88,6 +92,13 @@ const MakePayment = () => {
     if (!orderInfo.expired_time) return false
     if (!orderInfo.address) return false
     return true
+  }
+
+  const onPressMetamask = async () => {
+    await MetamaskSdk.connect()
+    const ethereum = MetamaskSdk.getProvider()
+    const accounts = await ethereum.request({ method: "eth_requestAccounts" })
+    console.log(accounts)
   }
 
   // ─────────────────────────────────────────────────────────────────────
@@ -157,12 +168,14 @@ const MakePayment = () => {
                       </C_Card>
                     </View>
                   ) : (
-                    <View className="my-5 h-40 w-40 items-center justify-center rounded-lg border border-gray-200 p-5">
+                    <TouchableOpacity
+                      onPress={onPressMetamask}
+                      className="my-5 h-40 w-40 items-center justify-center rounded-lg border border-gray-200 p-5">
                       <Image
                         source={image_metamask}
                         style={{ transform: [{ scale: 0.4 }] }}
                       />
-                    </View>
+                    </TouchableOpacity>
                   )}
                   <View className="flex-row space-x-1">
                     <Text>Enviar</Text>
